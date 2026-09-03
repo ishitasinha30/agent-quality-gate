@@ -74,7 +74,8 @@ python compare_to_golden.py --live        # regenerate evaluator output first (n
 ```
 
 `init_golden.py` only adds what's missing — it never touches an entry you've already
-filled in, and is safe to re-run after adding trajectories.
+filled in, and is safe to re-run after adding trajectories. To fill the entries with an
+AI first pass instead of from scratch, see **Bootstrapping with an AI** below.
 
 ## Writing a config for a new domain
 
@@ -87,6 +88,119 @@ filled in, and is safe to re-run after adding trajectories.
 4. Point the tools at it: `export AQG_CONFIG=config/your_domain.toml`.
 
 No evaluator code changes.
+
+## Bootstrapping with an AI
+
+Writing the config and the golden verdicts by hand is tedious. In practice you hand an
+LLM (Claude, or any capable model) a description of your system and your transcripts and
+have it draft both — then you review. Two prompts:
+
+### Prompt 1 — generate `config/<domain>.toml`
+
+```
+You are writing a domain config for the "Agent Quality Gate" evaluator. Output ONE
+TOML file and nothing else.
+
+SCHEMA
+- Top-level keys (ALL must appear BEFORE the first [[...]] block):
+  name          string  - short name of the system under evaluation
+  description   string  - one sentence: what the agent does, what requests it handles
+  states        array of strings - lifecycle states of the record the agent acts on,
+                in order; use [] if there is no meaningful state machine
+  states_label  string  - what to call those in prose, e.g. "order states", "ticket states"
+- [[tools]] block per tool the agent can call:
+  name          exact tool name as it appears in transcripts
+  effect        "read" (only looks something up) or "write" (changes state / money /
+                commitments, or hands off to a person)
+  description   one line: what it does and what it returns
+- [[constraints]] block per hard rule the agent must respect:
+  id            short_snake_case
+  rule          one plain sentence - a hard limit and what correct handling looks like
+                when it applies (e.g. "action X is only valid in state Y; otherwise
+                explain why and offer an alternative")
+- [[policy_rules]] block - OPTIONAL. Only for a real, NAMED business rule on the agent's
+  DECISIONS. Do not invent these; add one only if the system description names a concrete
+  rule. Never write one that just means "don't say unverified things" - that is handled
+  by another dimension.
+  id                short_snake_case
+  rule              what the agent may not do, and what to do instead
+  applies_when      the specific situation the rule is in force
+  violation_example a concrete phrase that would violate it
+
+INPUTS
+System description:
+<<< describe your agent: its job, who it serves, the domain >>>
+
+Tools it can call (name + what each does):
+<<< list them >>>
+
+2-3 sample transcripts (USER / AGENT / TOOL / RESULT lines):
+<<< paste >>>
+
+Produce the TOML.
+```
+
+Save the output as `config/<domain>.toml`, sanity-check it against `config/TEMPLATE.toml`,
+then `export AQG_CONFIG=config/<domain>.toml`.
+
+### Prompt 2 — draft golden verdicts for one trajectory
+
+Run `python init_golden.py` first for the skeleton, then for each trajectory:
+
+```
+You are drafting "golden" verdicts for the Agent Quality Gate evaluator - a reference a
+human will review, NOT the final answer. For the ONE trajectory below, score each of the
+six dimensions. Judge only what the transcript and config show; be strict and cite the
+exact turn or tool result behind each verdict.
+
+DIMENSIONS (score 0.0-1.0 unless marked N/A)
+- task_completion: did the user get the outcome they asked for? Build the list of things
+  that would make THIS request "done" from the user's first message, then score met/total.
+  Never N/A.
+- tool_use_correctness: right tools chosen; parameters correct (checked against tool
+  results); results read correctly; no needless calls; any available verification call
+  made before acting. Score = criteria met / 5.
+- grounding: does every factual claim in the agent's FINAL message trace to a tool result
+  in THIS transcript? Label each claim grounded / contradicted / ungrounded; score =
+  grounded / total claims. Apologies, questions and pleasantries are not claims.
+- reasoning_quality: was the agent's own inference / arithmetic / judgment correct? Score
+  = correct steps / total. If the agent did no real inference or calculation (a plain
+  lookup-and-report), status = "not_applicable", score = null.
+- communication_quality: rate the FINAL message on 5 fixed criteria - plain language;
+  complete & coherent (not fragments, not bloated/repetitive); professional tone;
+  internally consistent; information present (cross-check only, never a penalty).
+  met=1, partial=0.5, not_met=0; score = points / 5. A missing fact is task_completion's
+  problem, not this one.
+- policy_compliance: does the agent's decision violate a NAMED [[policy_rules]] entry in
+  the config? Score = compliant / applicable rules. If no policy rule is triggered,
+  status = "not_applicable", score = null. Never flag something just because nothing
+  confirms it - that is grounding's job.
+
+OUTPUT - exactly this shape, status "draft" for every dimension you actually scored:
+{
+  "id": "<trajectory filename without .txt>",
+  "intent": "<one phrase>",
+  "dimensions": {
+    "task_completion":       {"score": 0.0, "status": "draft", "reason": "..."},
+    "tool_use_correctness":  {"score": 0.0, "status": "draft", "reason": "..."},
+    "grounding":             {"score": 0.0, "status": "draft", "reason": "..."},
+    "reasoning_quality":     {"score": null, "status": "not_applicable", "reason": "..."},
+    "communication_quality": {"score": 0.0, "status": "draft", "reason": "..."},
+    "policy_compliance":     {"score": null, "status": "not_applicable", "reason": "..."}
+  }
+}
+
+CONFIG
+<<< paste your config/<domain>.toml >>>
+
+TRANSCRIPT
+<<< paste one trajectories/<name>.txt >>>
+```
+
+Merge each object into `golden_dataset.json`. **`compare_to_golden.py` ignores any row
+whose `status` is not `verified` (or `not_applicable`)** — so drafts sit inert until you
+read one, agree or fix the score, and change `status` to `verified`. That review step is
+the point of a golden set; don't skip it.
 
 ## Design notes
 
