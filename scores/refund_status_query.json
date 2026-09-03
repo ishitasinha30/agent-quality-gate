@@ -1,0 +1,39 @@
+{
+  "trajectory_file": "trajectories/refund_status_query.txt",
+  "checklist_file": "checklists/refund_status_query.json",
+  "results": [
+    {
+      "id": "order_and_refund_identified",
+      "criterion": "The agent looked up order 6210 and located the specific refund the customer is asking about.",
+      "verdict": "met",
+      "reason": "get_order(6210) returned a refund record for 'olive oil 500ml', which the agent referenced directly."
+    },
+    {
+      "id": "refund_status_reported",
+      "criterion": "The agent told the customer the current status of that refund (e.g. processing, completed, or failed).",
+      "verdict": "met",
+      "reason": "The agent said the refund 'is still processing', matching the record's status field."
+    },
+    {
+      "id": "timeline_given",
+      "criterion": "The agent gave the customer a concrete expected timeframe for when the refund will arrive.",
+      "verdict": "met",
+      "reason": "The agent stated 'within the next 1-2 business days' and an overall 'up to 7 business days' ceiling."
+    },
+    {
+      "id": "answer_grounded_in_record",
+      "criterion": "The status and timing the agent stated match what the system record shows, rather than a generic guess.",
+      "verdict": "met",
+      "reason": "The record shows status=processing, initiated 6 days ago, expected 1-2 more business days; the agent's answer matches on all three points."
+    },
+    {
+      "id": "no_unnecessary_actions",
+      "criterion": "The agent did not issue a new refund, replacement, or other change, since the customer only asked for status.",
+      "verdict": "met",
+      "reason": "The only tool call was get_order; no write action was taken."
+    }
+  ],
+  "met": 5,
+  "total": 5,
+  "score": 1.0
+}

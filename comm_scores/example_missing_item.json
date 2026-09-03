@@ -1,0 +1,34 @@
+{
+  "trajectory_file": "trajectories/example_missing_item.txt",
+  "final_message": "You've been refunded ₹60 for the missing eggs, expected in 3-5 business days.",
+  "results": [
+    {
+      "id": "plain_language",
+      "verdict": "met",
+      "reason": "Uses everyday wording — refund amount, item, and timeframe — with no jargon, codes, or internal shorthand."
+    },
+    {
+      "id": "complete_coherent_response",
+      "verdict": "met",
+      "reason": "It is a single grammatical sentence that conveys the outcome without repetition or bloat, and brevity alone is not a fault."
+    },
+    {
+      "id": "professional_tone",
+      "verdict": "partial",
+      "reason": "Not rude, but purely transactional — it offers no acknowledgement or brief apology for the missing item the customer paid for."
+    },
+    {
+      "id": "internally_consistent",
+      "verdict": "met",
+      "reason": "The single claim about the refund amount and timing contains no contradictions."
+    },
+    {
+      "id": "information_present",
+      "verdict": "met",
+      "reason": "Outcome (refund issued), amount (₹60), reason (missing eggs), and timeframe (3-5 business days) are all stated, though the destination of the refund is unmentioned."
+    }
+  ],
+  "points": 4.5,
+  "total": 5,
+  "score": 0.9
+}

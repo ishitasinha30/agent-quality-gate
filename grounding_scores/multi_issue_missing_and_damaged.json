@@ -1,0 +1,24 @@
+{
+  "trajectory_file": "trajectories/multi_issue_missing_and_damaged.txt",
+  "claims_file": "grounding_claims/multi_issue_missing_and_damaged.json",
+  "verdicts": [
+    {
+      "id": "refunded_60_eggs",
+      "claim": "The customer has been refunded ₹60 for the missing eggs.",
+      "label": "grounded",
+      "reason": "issue_refund result 'Refund of ₹60 issued' with item=\"eggs\"; get_order lists 'eggs 6pc ₹60'."
+    },
+    {
+      "id": "timeline_3_5_days",
+      "claim": "The refund is expected in 3-5 business days.",
+      "label": "grounded",
+      "reason": "issue_refund result states '3-5 business days'."
+    }
+  ],
+  "grounded": 2,
+  "contradicted": 0,
+  "ungrounded": 0,
+  "total": 2,
+  "score": 1.0,
+  "note": "Grounding only checks what the agent asserted. The ignored stale-bread issue is invisible here because nothing false was said about it — that miss shows up under task completion and tool-use."
+}

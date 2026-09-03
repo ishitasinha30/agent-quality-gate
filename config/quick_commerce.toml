@@ -1,0 +1,98 @@
+# ---------------------------------------------------------------------------
+# Domain config: Quick Commerce delivery support (Blinkit / Zepto / Instamart style)
+#
+# This file holds everything that is SPECIFIC to this product: its tools, its
+# order lifecycle, and its rules. The evaluator code does not know any of this —
+# it reads this file. Swapping this file for another product's config is how the
+# same evaluator later works on a different domain without a rewrite.
+#
+# It is plain text. Lines starting with "#" are comments/notes for you and are
+# ignored by the program. Edit freely.
+#
+# NOTE ON FORMAT: all the plain "key = value" lines must come BEFORE the first
+# [[tools]] / [[constraints]] block. Anything after a block gets read as part of
+# that block. So the simple settings live up here at the top.
+# ---------------------------------------------------------------------------
+
+name = "Quick Commerce Delivery — Customer Support"
+description = "Support agent resolves delivery issues: missing items, wrong items, late orders, damage, cancellations, refund status."
+
+# --- Lifecycle of the entity the agent acts on ----------------------------
+# `states`       : the lifecycle states, in the order they normally happen.
+# `states_label` : what to call them in prompts (e.g. "order states",
+#                  "ticket states", "case states"). Optional; defaults to "states".
+# ("cancelled" here is an end state reachable from the earlier states only.)
+states = ["placed", "packed", "out_for_delivery", "delivered", "cancelled"]
+states_label = "order states"
+
+# --- Tools the agent is allowed to call --------------------------------------
+# "effect" is a hint for later scoring:
+#   read  = just looks something up, changes nothing
+#   write = changes the customer's order or money, or pulls in a human
+# It matters because "task done" usually requires the right WRITE action,
+# and a wrong write action (e.g. refund when a replacement was asked for) is
+# a partial completion, not a pass.
+
+[[tools]]
+name = "get_order"
+effect = "read"
+description = "Look up an order by its ID: its items, amounts, and current status."
+
+[[tools]]
+name = "get_order_items"
+effect = "read"
+description = "List the individual items in an order (name, price, quantity)."
+
+[[tools]]
+name = "get_delivery_status"
+effect = "read"
+description = "Check where an order is in the delivery lifecycle."
+
+[[tools]]
+name = "get_delivery_partner_eta"
+effect = "read"
+description = "Get the delivery rider's current estimated time of arrival."
+
+[[tools]]
+name = "issue_refund"
+effect = "write"
+description = "Refund money for a specific item (or items) in an order."
+
+[[tools]]
+name = "issue_replacement"
+effect = "write"
+description = "Send a replacement for a specific item (or items) in an order."
+
+[[tools]]
+name = "cancel_order"
+effect = "write"
+description = "Cancel an order. Only valid before the order is out_for_delivery."
+
+[[tools]]
+name = "escalate_to_human"
+effect = "write"
+description = "Hand the case to a human support agent."
+
+# --- Rules the agent must respect ---------------------------------------------
+# Written as plain sentences on purpose: later, the checklist step reads these
+# so it can hold a trajectory to the domain's actual rules.
+
+[[constraints]]
+id = "cancel_before_dispatch"
+rule = "cancel_order is only valid before an order reaches 'out_for_delivery'. If the order is already out_for_delivery or delivered, the correct behaviour is to explain why cancellation is not possible and offer an alternative — not to silently fail."
+
+[[constraints]]
+id = "remedy_matches_flagged_items"
+rule = "A refund or replacement must correspond to exactly the specific item(s) the customer flagged, valued at those item(s), not the full order value."
+
+# --- Policy rules -----------------------------------------------------------
+# Fixed business rules the agent's DECISIONS must stay within, independent of
+# what any tool result says. Checked by the policy-compliance dimension only.
+# Most trajectories touch no policy rule at all -> that dimension is then "not
+# applicable" for them, not scored.
+
+[[policy_rules]]
+id = "wrong_item_disposition"
+rule = "An agent may not unilaterally decide what happens to a mis-delivered item (e.g. telling the customer to keep it). Correct handling is to arrange a return pickup alongside the replacement, or escalate to a human if no return process applies."
+applies_when = "A wrong-item-delivered intent results in a replacement or refund."
+violation_example = "\"You can keep the Amul milk that was sent by mistake\" — stated with no config rule or tool result authorizing it."

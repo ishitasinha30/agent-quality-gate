@@ -1,0 +1,15 @@
+{
+  "trajectory_file": "trajectories/cancel_after_dispatch_good.txt",
+  "config_file": "config/quick_commerce.toml",
+  "applicable": false,
+  "results": [
+    {
+      "id": "wrong_item_disposition",
+      "verdict": "not_applicable",
+      "reason": "This is a cancel-after-dispatch intent, not a wrong-item-delivered intent, so the rule's applies_when condition is not met. The unbacked refund/return promise is grounding's concern (0.25), not policy compliance's — no specific policy rule covers it."
+    }
+  ],
+  "compliant": 0,
+  "total": 0,
+  "score": null
+}

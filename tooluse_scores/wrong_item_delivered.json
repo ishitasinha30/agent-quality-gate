@@ -1,0 +1,34 @@
+{
+  "trajectory_file": "trajectories/wrong_item_delivered.txt",
+  "checklist_file": "tooluse_checklists/wrong_item_delivered.json",
+  "results": [
+    {
+      "id": "correct_tools_selected",
+      "verdict": "met",
+      "reason": "The agent called get_order to look up the order and issue_replacement to send the correct item, matching the customer's request; it used no refund or cancel tool."
+    },
+    {
+      "id": "parameters_correct",
+      "verdict": "met",
+      "reason": "get_order used order_id=9052, and issue_replacement used item=\"Nandini full-cream milk 1L\", amount=66 — the item's listed price in the returned record."
+    },
+    {
+      "id": "tool_results_interpreted_correctly",
+      "verdict": "met",
+      "reason": "The agent read the get_order result correctly, confirming \"Nandini full-cream milk (₹66) on your order\" before issuing the replacement."
+    },
+    {
+      "id": "no_unnecessary_tool_calls",
+      "verdict": "met",
+      "reason": "Only get_order and issue_replacement were called and both results were used; no needless calls such as get_delivery_status or escalate_to_human."
+    },
+    {
+      "id": "required_verification_call_made",
+      "verdict": "met",
+      "reason": "No tool can confirm the physical contents of the delivery, so there was no verification call to miss; not penalized per PRD Section 6."
+    }
+  ],
+  "met": 5,
+  "total": 5,
+  "score": 1.0
+}

@@ -1,0 +1,29 @@
+{
+  "trajectory_file": "trajectories/cancel_after_dispatch_good.txt",
+  "steps_file": "reasoning_steps/cancel_after_dispatch_good.json",
+  "applicable": true,
+  "skipped_steps": ["full_refund_available_via_return"],
+  "results": [
+    {
+      "id": "cancellation_eligibility",
+      "kind": "judgment",
+      "verdict": "correct",
+      "reason": "get_order returned status=out_for_delivery and the rule blocks cancel_order at that state, so 'cannot be cancelled' follows."
+    },
+    {
+      "id": "compute_full_refund",
+      "kind": "calculation",
+      "verdict": "correct",
+      "reason": "90 + 30 + 10 = 130, the figure the agent stated."
+    },
+    {
+      "id": "figure_follows_from_inputs",
+      "kind": "guard",
+      "verdict": "correct",
+      "reason": "130 = 90 + 30 + 10, the full set of listed item prices."
+    }
+  ],
+  "correct": 3,
+  "total": 3,
+  "score": 1.0
+}

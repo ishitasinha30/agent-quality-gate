@@ -1,0 +1,26 @@
+{
+  "applicable": true,
+  "steps": [
+    {
+      "id": "identify_missing_items",
+      "kind": "inference",
+      "step": "Work out which ordered items were not delivered.",
+      "inputs": "Customer said only the milk arrived; get_order lists items [milk ₹40, bread ₹35, eggs ₹60].",
+      "conclusion": "Bread and eggs were not delivered."
+    },
+    {
+      "id": "compute_refund_total",
+      "kind": "calculation",
+      "step": "Add the prices of the missing items to get the refund amount.",
+      "inputs": "bread ₹35 and eggs ₹60, from the get_order result; the agent showed the working \"₹35 + ₹60\".",
+      "conclusion": "The agent stated a refund of ₹95 (and passed amount=95 to issue_refund)."
+    },
+    {
+      "id": "figure_follows_from_inputs",
+      "kind": "guard",
+      "step": "Check that the stated refund figure corresponds to an actual combination of the listed item prices.",
+      "inputs": "Stated refund ₹95; listed prices {milk 40, bread 35, eggs 60}.",
+      "conclusion": "(to be checked in the scoring stage)"
+    }
+  ]
+}

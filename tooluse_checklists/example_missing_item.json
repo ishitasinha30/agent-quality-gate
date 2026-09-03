@@ -1,0 +1,25 @@
+{
+  "generated_from_opening_message": "I ordered 3 items — milk, bread, eggs — but only the milk and bread arrived.",
+  "items": [
+    {
+      "id": "correct_tools_selected",
+      "criterion": "The agent uses get_order (or get_order_items) to look up the order and its contents, and issue_refund or issue_replacement to remedy the missing item; it does not use unrelated write tools such as cancel_order."
+    },
+    {
+      "id": "parameters_correct",
+      "criterion": "get_order is called with the customer's own order_id; the refund or replacement names the missing item (\"eggs\"), and any refund amount equals that item's price from the order record, not the full order value."
+    },
+    {
+      "id": "tool_results_interpreted_correctly",
+      "criterion": "The agent reads the get_order result correctly: identifies eggs as the item not delivered, notes the order status, and takes the refund amount from the returned per-item price."
+    },
+    {
+      "id": "no_unnecessary_tool_calls",
+      "criterion": "The agent does not call tools the request does not need, such as get_delivery_partner_eta or escalate_to_human."
+    },
+    {
+      "id": "required_verification_call_made",
+      "criterion": "Before issuing the refund or replacement, the agent calls get_delivery_status to confirm the eggs are genuinely undelivered and not still arriving on a separate delivery leg; a verification tool does apply here, so skipping it is a miss."
+    }
+  ]
+}

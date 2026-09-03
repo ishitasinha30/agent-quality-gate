@@ -1,0 +1,29 @@
+{
+  "trajectory_file": "trajectories/refund_status_query_wrong.txt",
+  "claims_file": "grounding_claims/refund_status_query_wrong.json",
+  "verdicts": [
+    {
+      "id": "refund_amount",
+      "claim": "The customer's refund is for ₹450 (for the olive oil).",
+      "label": "grounded",
+      "reason": "The get_order result gives refund.amount=450 and refund.item=\"olive oil 500ml\", directly supporting both the amount and the item."
+    },
+    {
+      "id": "refund_completed_3_days_ago",
+      "claim": "The refund was completed 3 days ago.",
+      "label": "contradicted",
+      "reason": "The get_order result shows refund.status=processing and refund.initiated='6 days ago', which conflicts with both 'completed' and '3 days ago'."
+    },
+    {
+      "id": "refund_credited_to_account",
+      "claim": "The refund has already been credited to the customer's account.",
+      "label": "contradicted",
+      "reason": "refund.status=processing means the refund is not yet complete, so 'already credited' conflicts with the returned status; no field reports a crediting event."
+    }
+  ],
+  "grounded": 1,
+  "contradicted": 2,
+  "ungrounded": 0,
+  "total": 3,
+  "score": 0.3333
+}

@@ -1,0 +1,25 @@
+{
+  "generated_from_opening_message": "When will I get my refund for order 6210? It's been a week.",
+  "items": [
+    {
+      "id": "correct_tools_selected",
+      "criterion": "Uses get_order (a read tool) to retrieve the refund's current state; this is a read-only status query, so no write tool (issue_refund, issue_replacement, cancel_order) is called."
+    },
+    {
+      "id": "parameters_correct",
+      "criterion": "get_order is called with the customer's own order_id (6210)."
+    },
+    {
+      "id": "tool_results_interpreted_correctly",
+      "criterion": "The agent reads the refund fields from the result correctly (status, initiated date, expected timeframe) and reports them without distortion."
+    },
+    {
+      "id": "no_unnecessary_tool_calls",
+      "criterion": "No tools the request does not need are called (delivery lookups, escalate_to_human, any write tool)."
+    },
+    {
+      "id": "required_verification_call_made",
+      "criterion": "The single lookup that answers the question (get_order / refund status) is made; a status query has no separate pre-action verification beyond that."
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "final_message": "Good news — your ₹450 refund for the olive oil was completed 3 days ago and has already been credited to your account. If you don't see it, please check with your bank.",
+  "claims": [
+    {
+      "id": "refund_amount",
+      "claim": "The customer's refund is for ₹450 (for the olive oil).",
+      "quote": "your ₹450 refund for the olive oil"
+    },
+    {
+      "id": "refund_completed_3_days_ago",
+      "claim": "The refund was completed 3 days ago.",
+      "quote": "was completed 3 days ago"
+    },
+    {
+      "id": "refund_credited_to_account",
+      "claim": "The refund has already been credited to the customer's account.",
+      "quote": "has already been credited to your account"
+    }
+  ]
+}

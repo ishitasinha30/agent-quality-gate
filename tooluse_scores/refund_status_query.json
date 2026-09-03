@@ -1,0 +1,34 @@
+{
+  "trajectory_file": "trajectories/refund_status_query.txt",
+  "checklist_file": "tooluse_checklists/refund_status_query.json",
+  "results": [
+    {
+      "id": "correct_tools_selected",
+      "verdict": "met",
+      "reason": "Only get_order was called — the right read tool for a status query; no write tool was used."
+    },
+    {
+      "id": "parameters_correct",
+      "verdict": "met",
+      "reason": "get_order was called with order_id=6210, the customer's order."
+    },
+    {
+      "id": "tool_results_interpreted_correctly",
+      "verdict": "met",
+      "reason": "The agent reported status=processing, initiated 6 days ago, and expected 1-2 more business days — all matching the returned refund fields."
+    },
+    {
+      "id": "no_unnecessary_tool_calls",
+      "verdict": "met",
+      "reason": "get_order was the only call."
+    },
+    {
+      "id": "required_verification_call_made",
+      "verdict": "met",
+      "reason": "The lookup needed to answer the question was made."
+    }
+  ],
+  "met": 5,
+  "total": 5,
+  "score": 1.0
+}

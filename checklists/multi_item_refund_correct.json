@@ -1,0 +1,33 @@
+{
+  "generated_from_opening_message": "I ordered milk, bread, and eggs, but only the milk arrived.",
+  "items": [
+    {
+      "id": "order_identified",
+      "criterion": "The agent identifies the specific order containing milk, bread, and eggs (asking the user for the order ID if it was not provided)."
+    },
+    {
+      "id": "missing_items_scoped",
+      "criterion": "The resolution covers exactly the two missing items the user flagged — bread and eggs — and not the milk that did arrive."
+    },
+    {
+      "id": "resolution_action_taken",
+      "criterion": "The agent issues a refund or a replacement for the bread and eggs (or explains clearly why it cannot and escalates/offers an alternative)."
+    },
+    {
+      "id": "value_matches_items",
+      "criterion": "Any refund amount corresponds to the value of the bread and eggs only, not the full order value."
+    },
+    {
+      "id": "outcome_communicated",
+      "criterion": "The agent tells the user what was done for the missing items, including the refund amount or replacement details."
+    },
+    {
+      "id": "timeline_communicated",
+      "criterion": "The agent tells the user when to expect the refund to land or the replacement to arrive."
+    },
+    {
+      "id": "no_extra_actions",
+      "criterion": "The agent does not cancel the order, refund or replace unflagged items, or take any other write action beyond resolving the two missing items."
+    }
+  ]
+}

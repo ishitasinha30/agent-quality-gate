@@ -1,0 +1,15 @@
+{
+  "final_message": "You've been refunded ₹60 for the missing eggs, expected in 3-5 business days. Is there anything else?",
+  "claims": [
+    {
+      "id": "refunded_60_eggs",
+      "claim": "The customer has been refunded ₹60 for the missing eggs.",
+      "quote": "You've been refunded ₹60 for the missing eggs"
+    },
+    {
+      "id": "timeline_3_5_days",
+      "claim": "The refund is expected in 3-5 business days.",
+      "quote": "expected in 3-5 business days"
+    }
+  ]
+}

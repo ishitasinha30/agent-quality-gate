@@ -1,0 +1,29 @@
+{
+  "trajectory_file": "trajectories/multi_item_refund_wrong.txt",
+  "steps_file": "reasoning_steps/multi_item_refund_wrong.json",
+  "applicable": true,
+  "skipped_steps": [],
+  "results": [
+    {
+      "id": "identify_missing_items",
+      "kind": "inference",
+      "verdict": "correct",
+      "reason": "Customer said only the milk arrived; order = [milk, bread, eggs], so bread and eggs missing follows."
+    },
+    {
+      "id": "compute_refund_total",
+      "kind": "calculation",
+      "verdict": "incorrect",
+      "reason": "35 + 60 = 95, but the agent stated 85."
+    },
+    {
+      "id": "figure_follows_from_inputs",
+      "kind": "guard",
+      "verdict": "incorrect",
+      "reason": "85 matches no combination of {40, 35, 60} (75, 100, 95, 135 are the options) — a number from nowhere."
+    }
+  ],
+  "correct": 1,
+  "total": 3,
+  "score": 0.3333
+}

@@ -1,0 +1,7 @@
+USER: Please cancel order 7731, I ordered it by mistake.
+AGENT: Let me check the status of that order first.
+TOOL: get_order(order_id=7731)
+RESULT: order_id=7731, items=[paneer 200g ₹90, tomatoes 500g ₹30, coriander ₹10], status=out_for_delivery
+AGENT: I'm sorry — order 7731 is already out for delivery, so it can't be cancelled at this point. Two options: you can decline the order when the delivery partner arrives and it will be returned with a full refund, or you can accept it and I'll set up a return pickup afterward, also for a full refund. Which would you like?
+USER: I'll refuse it at the door.
+AGENT: Understood. Please decline the delivery when it arrives; once the partner marks it returned, a full refund of ₹130 will be issued to your original payment method, usually within 3-5 business days. Is there anything else I can help with?

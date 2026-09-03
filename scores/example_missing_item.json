@@ -1,0 +1,45 @@
+{
+  "trajectory_file": "trajectories/example_missing_item.txt",
+  "checklist_file": "checklists/example_missing_item.json",
+  "results": [
+    {
+      "id": "verify_order_contents",
+      "criterion": "The agent identified the correct order and confirmed that eggs were one of the items on it.",
+      "verdict": "met",
+      "reason": "get_order(8341) returned the three items the customer named including 'eggs ₹60', and the agent acted on that order."
+    },
+    {
+      "id": "remedy_for_eggs",
+      "criterion": "The agent provided an appropriate remedy (refund or replacement) for the missing eggs.",
+      "verdict": "met",
+      "reason": "issue_refund for the eggs returned 'Refund of ₹60 issued'."
+    },
+    {
+      "id": "remedy_scoped_to_eggs_value",
+      "criterion": "The remedy covers only the eggs and is valued at the eggs' price, not the full order value.",
+      "verdict": "met",
+      "reason": "The refund was ₹60, exactly the eggs' listed price, not the ₹135 order total."
+    },
+    {
+      "id": "no_extra_actions",
+      "criterion": "The agent did not refund, replace, or cancel anything beyond the missing eggs, including the delivered milk and bread.",
+      "verdict": "met",
+      "reason": "Only a single refund call scoped to the eggs was made; no action touched the delivered milk or bread."
+    },
+    {
+      "id": "outcome_communicated",
+      "criterion": "The agent clearly told the customer what remedy was applied for the missing eggs.",
+      "verdict": "met",
+      "reason": "The agent told the customer 'You've been refunded ₹60 for the missing eggs.'"
+    },
+    {
+      "id": "timeline_communicated",
+      "criterion": "If a refund was issued, the agent told the customer when the money would arrive; if a replacement was issued, the agent gave a delivery timeline.",
+      "verdict": "met",
+      "reason": "The closing message stated the refund is 'expected in 3-5 business days,' matching the tool result."
+    }
+  ],
+  "met": 6,
+  "total": 6,
+  "score": 1.0
+}

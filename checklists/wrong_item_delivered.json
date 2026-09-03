@@ -1,0 +1,33 @@
+{
+  "generated_from_opening_message": "I ordered Nandini full-cream milk but the delivery had Amul milk instead. I'd like the correct one sent.",
+  "items": [
+    {
+      "id": "verify_order_contents",
+      "criterion": "The agent looked up the order and confirmed that Nandini full-cream milk was the item the customer actually ordered."
+    },
+    {
+      "id": "confirm_wrong_item",
+      "criterion": "The agent established that the product delivered (Amul milk) differs from the item ordered."
+    },
+    {
+      "id": "replacement_of_correct_item",
+      "criterion": "The agent arranged for the correct item to be sent, since the customer asked for the right one rather than a refund."
+    },
+    {
+      "id": "remedy_scoped_to_flagged_item",
+      "criterion": "The remedy covers only the mis-delivered milk and its value, not the bread, bananas, or the full order."
+    },
+    {
+      "id": "no_extra_actions",
+      "criterion": "The agent did not refund, replace, or cancel anything beyond the one wrong item."
+    },
+    {
+      "id": "outcome_communicated",
+      "criterion": "The agent clearly told the customer that a replacement of the correct item has been arranged."
+    },
+    {
+      "id": "timeline_communicated",
+      "criterion": "The agent told the customer when the replacement is expected to arrive."
+    }
+  ]
+}

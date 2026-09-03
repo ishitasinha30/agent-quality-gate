@@ -1,0 +1,25 @@
+{
+  "generated_from_opening_message": "I ordered Nandini full-cream milk but the delivery had Amul milk instead. I'd like the correct one sent.",
+  "items": [
+    {
+      "id": "correct_tools_selected",
+      "criterion": "The agent uses get_order (or get_order_items) to look up the order, and issue_replacement to send the correct item, since the customer asked for the right one to be sent; it does not use issue_refund or cancel_order."
+    },
+    {
+      "id": "parameters_correct",
+      "criterion": "get_order is called with the customer's own order_id; issue_replacement names the mis-delivered item (\"Nandini full-cream milk\"), and any amount matches that item's price from the order record."
+    },
+    {
+      "id": "tool_results_interpreted_correctly",
+      "criterion": "The agent reads the get_order result correctly: confirms Nandini full-cream milk was on the order and uses its details for the replacement."
+    },
+    {
+      "id": "no_unnecessary_tool_calls",
+      "criterion": "The agent does not call tools the request does not need, such as get_delivery_status, get_delivery_partner_eta, or escalate_to_human."
+    },
+    {
+      "id": "required_verification_call_made",
+      "criterion": "No tool in the config can confirm the physical contents of what was handed over (get_order shows what was ordered, not delivered), so no verification call could establish the wrong-item claim; this criterion cannot be failed for a missing verification here."
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "trajectory_file": "trajectories/refund_status_query.txt",
+  "claims_file": "grounding_claims/refund_status_query.json",
+  "verdicts": [
+    {
+      "id": "refund_amount",
+      "claim": "The customer's refund is for ₹450.",
+      "label": "grounded",
+      "reason": "get_order(6210) refund field shows amount: 450 for item 'olive oil 500ml'."
+    },
+    {
+      "id": "refund_status_processing",
+      "claim": "The refund is still processing.",
+      "label": "grounded",
+      "reason": "get_order(6210) refund field shows status: processing."
+    },
+    {
+      "id": "refund_initiated_6_days_ago",
+      "claim": "The refund was initiated 6 days ago.",
+      "label": "grounded",
+      "reason": "get_order(6210) refund field shows initiated: 6 days ago."
+    },
+    {
+      "id": "completes_in_1_2_business_days",
+      "claim": "The refund should complete within the next 1-2 business days.",
+      "label": "grounded",
+      "reason": "get_order(6210) refund field shows expected: 1-2 more business days."
+    },
+    {
+      "id": "refunds_take_up_to_7_business_days",
+      "claim": "Refunds can take up to 7 business days in total to reach an account.",
+      "label": "ungrounded",
+      "reason": "No tool result states a general 7-business-day refund policy; the order data only gives this refund's timing fields."
+    }
+  ],
+  "grounded": 4,
+  "contradicted": 0,
+  "ungrounded": 1,
+  "total": 5,
+  "score": 0.8
+}

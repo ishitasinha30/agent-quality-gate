@@ -1,0 +1,34 @@
+{
+  "trajectory_file": "trajectories/refund_status_query_wrong.txt",
+  "checklist_file": "checklists/refund_status_query_wrong.json",
+  "results": [
+    {
+      "id": "order_and_refund_identified",
+      "verdict": "met",
+      "reason": "get_order(6210) returned the refund record for 'olive oil 500ml' and the agent referenced the correct item and amount (₹450)."
+    },
+    {
+      "id": "refund_status_reported",
+      "verdict": "partial",
+      "reason": "The agent did state a status, but 'completed 3 days ago' contradicts the record's status=processing, so it is not the current status."
+    },
+    {
+      "id": "timeline_given",
+      "verdict": "not_met",
+      "reason": "Instead of the record's 'expected: 1-2 more business days', the agent claimed the refund was already credited 3 days ago, giving no valid forward timeframe."
+    },
+    {
+      "id": "answer_grounded_in_record",
+      "verdict": "not_met",
+      "reason": "The record shows status=processing, initiated 6 days ago, expected 1-2 more business days; the agent said completed 3 days ago and credited — a direct contradiction."
+    },
+    {
+      "id": "no_unnecessary_actions",
+      "verdict": "met",
+      "reason": "The only tool call was get_order; no write action was taken."
+    }
+  ],
+  "met": 2,
+  "total": 5,
+  "score": 0.4
+}

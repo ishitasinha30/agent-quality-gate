@@ -1,0 +1,34 @@
+{
+  "trajectory_file": "trajectories/example_missing_item_jargon.txt",
+  "final_message": "Item flagged missing. Adjustment ₹60 processed against order 8341. TAT 3-5 bd.",
+  "results": [
+    {
+      "id": "plain_language",
+      "verdict": "not_met",
+      "reason": "\"TAT\", \"bd\", and \"adjustment processed against order\" are internal shorthand a customer will not reliably understand."
+    },
+    {
+      "id": "complete_coherent_response",
+      "verdict": "not_met",
+      "reason": "Three clipped fragments rather than one coherent reply in full sentences."
+    },
+    {
+      "id": "professional_tone",
+      "verdict": "partial",
+      "reason": "Not rude, but robotic and terse, with no acknowledgment of the inconvenience to the customer."
+    },
+    {
+      "id": "internally_consistent",
+      "verdict": "met",
+      "reason": "Nothing in the message conflicts with anything else in it."
+    },
+    {
+      "id": "information_present",
+      "verdict": "met",
+      "reason": "Cross-check: amount (₹60), order reference (8341), and timeframe (3-5 bd) are all technically present."
+    }
+  ],
+  "points": 2.5,
+  "total": 5,
+  "score": 0.5
+}

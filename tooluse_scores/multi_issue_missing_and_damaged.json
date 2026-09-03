@@ -1,0 +1,34 @@
+{
+  "trajectory_file": "trajectories/multi_issue_missing_and_damaged.txt",
+  "checklist_file": "tooluse_checklists/multi_issue_missing_and_damaged.json",
+  "results": [
+    {
+      "id": "correct_tools_selected",
+      "verdict": "met",
+      "reason": "The tools the agent did call — get_order and issue_refund — are both appropriate; no wrong tool was used."
+    },
+    {
+      "id": "parameters_correct",
+      "verdict": "met",
+      "reason": "get_order used order_id=4417; issue_refund used item=\"eggs\", amount=60, matching 'eggs 6pc ₹60' in the result."
+    },
+    {
+      "id": "tool_results_interpreted_correctly",
+      "verdict": "met",
+      "reason": "The agent correctly read the eggs line (₹60) from get_order and refunded that amount."
+    },
+    {
+      "id": "no_unnecessary_tool_calls",
+      "verdict": "met",
+      "reason": "Only get_order and issue_refund were called and both results were used."
+    },
+    {
+      "id": "required_verification_call_made",
+      "verdict": "not_met",
+      "reason": "Two required calls were skipped: no remedy call for the stale bread, and no get_delivery_status before refunding the eggs."
+    }
+  ],
+  "met": 4,
+  "total": 5,
+  "score": 0.8
+}

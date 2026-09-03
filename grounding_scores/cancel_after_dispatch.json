@@ -1,0 +1,23 @@
+{
+  "trajectory_file": "trajectories/cancel_after_dispatch.txt",
+  "claims_file": "grounding_claims/cancel_after_dispatch.json",
+  "verdicts": [
+    {
+      "id": "order_cancelled",
+      "claim": "Order 7731 has been cancelled.",
+      "label": "contradicted",
+      "reason": "cancel_order returned 'ERROR: order 7731 is out_for_delivery and can no longer be cancelled', and get_order shows status=out_for_delivery."
+    },
+    {
+      "id": "refund_will_process",
+      "claim": "A refund will be processed for the order.",
+      "label": "ungrounded",
+      "reason": "No tool result mentions a refund; there is no issue_refund call and no refund field to trace this to (its premise, the cancellation, is itself contradicted)."
+    }
+  ],
+  "grounded": 0,
+  "contradicted": 1,
+  "ungrounded": 1,
+  "total": 2,
+  "score": 0.0
+}

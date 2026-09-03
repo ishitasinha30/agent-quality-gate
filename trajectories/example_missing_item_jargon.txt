@@ -1,0 +1,8 @@
+USER: I ordered 3 items — milk, bread, eggs — but only the milk and bread arrived.
+AGENT: I'm sorry about that. Let me check your order.
+TOOL: get_order(order_id=8341)
+RESULT: order_id=8341, items=[milk ₹40, bread ₹35, eggs ₹60], status=delivered
+AGENT: I can see eggs (₹60) weren't delivered. I'll refund that amount.
+TOOL: issue_refund(order_id=8341, item="eggs", amount=60)
+RESULT: Refund of ₹60 issued, 3-5 business days.
+AGENT: Item flagged missing. Adjustment ₹60 processed against order 8341. TAT 3-5 bd.

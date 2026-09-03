@@ -1,0 +1,30 @@
+{
+  "final_message": "Your ₹450 refund for the olive oil was initiated 6 days ago and is still processing. It should complete within the next 1-2 business days. Refunds can take up to 7 business days in total to reach your account.",
+  "claims": [
+    {
+      "id": "refund_amount",
+      "claim": "The customer's refund is for ₹450.",
+      "quote": "Your ₹450 refund for the olive oil"
+    },
+    {
+      "id": "refund_status_processing",
+      "claim": "The refund is still processing.",
+      "quote": "is still processing"
+    },
+    {
+      "id": "refund_initiated_6_days_ago",
+      "claim": "The refund was initiated 6 days ago.",
+      "quote": "was initiated 6 days ago"
+    },
+    {
+      "id": "completes_in_1_2_business_days",
+      "claim": "The refund should complete within the next 1-2 business days.",
+      "quote": "It should complete within the next 1-2 business days"
+    },
+    {
+      "id": "refunds_take_up_to_7_business_days",
+      "claim": "Refunds can take up to 7 business days in total to reach an account.",
+      "quote": "Refunds can take up to 7 business days in total to reach your account"
+    }
+  ]
+}

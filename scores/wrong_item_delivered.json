@@ -1,0 +1,51 @@
+{
+  "trajectory_file": "trajectories/wrong_item_delivered.txt",
+  "checklist_file": "checklists/wrong_item_delivered.json",
+  "results": [
+    {
+      "id": "verify_order_contents",
+      "criterion": "The agent looked up the order and confirmed that Nandini full-cream milk was the item the customer actually ordered.",
+      "verdict": "met",
+      "reason": "get_order(9052) returned 'Nandini full-cream milk 1L ₹66' in the item list, which the agent then referenced."
+    },
+    {
+      "id": "confirm_wrong_item",
+      "criterion": "The agent established that the product delivered (Amul milk) differs from the item ordered.",
+      "verdict": "met",
+      "reason": "The agent acknowledged the substitution ('the Amul milk that was sent by mistake') against the ordered Nandini milk; no tool exposes physical delivery contents, so the customer's report plus the order lookup is the available basis."
+    },
+    {
+      "id": "replacement_of_correct_item",
+      "criterion": "The agent arranged for the correct item to be sent, since the customer asked for the right one rather than a refund.",
+      "verdict": "met",
+      "reason": "issue_replacement(item=\"Nandini full-cream milk 1L\") returned a scheduled replacement, matching the customer's request for the correct item."
+    },
+    {
+      "id": "remedy_scoped_to_flagged_item",
+      "criterion": "The remedy covers only the mis-delivered milk and its value, not the bread, bananas, or the full order.",
+      "verdict": "met",
+      "reason": "The replacement call named only the milk at amount=66, its listed price, leaving the other two items untouched."
+    },
+    {
+      "id": "no_extra_actions",
+      "criterion": "The agent did not refund, replace, or cancel anything beyond the one wrong item.",
+      "verdict": "met",
+      "reason": "Only one write action occurred (issue_replacement for the milk); no refund or cancellation was made."
+    },
+    {
+      "id": "outcome_communicated",
+      "criterion": "The agent clearly told the customer that a replacement of the correct item has been arranged.",
+      "verdict": "met",
+      "reason": "The closing message states 'A replacement Nandini full-cream milk is on its way.'"
+    },
+    {
+      "id": "timeline_communicated",
+      "criterion": "The agent told the customer when the replacement is expected to arrive.",
+      "verdict": "met",
+      "reason": "The closing message gives 'within about 2 hours', matching the tool result."
+    }
+  ],
+  "met": 7,
+  "total": 7,
+  "score": 1.0
+}

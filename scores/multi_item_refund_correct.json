@@ -1,0 +1,51 @@
+{
+  "trajectory_file": "trajectories/multi_item_refund_correct.txt",
+  "checklist_file": "checklists/multi_item_refund_correct.json",
+  "results": [
+    {
+      "id": "order_identified",
+      "criterion": "The agent identifies the specific order containing milk, bread, and eggs (asking the user for the order ID if it was not provided).",
+      "verdict": "partial",
+      "reason": "The agent called get_order with order_id=9411 that the user never provided and never asked for it, though the returned order did match the described items."
+    },
+    {
+      "id": "missing_items_scoped",
+      "criterion": "The resolution covers exactly the two missing items the user flagged — bread and eggs — and not the milk that did arrive.",
+      "verdict": "met",
+      "reason": "The refund covered only bread and eggs, explicitly excluding the ₹40 milk that arrived."
+    },
+    {
+      "id": "resolution_action_taken",
+      "criterion": "The agent issues a refund or a replacement for the bread and eggs (or explains clearly why it cannot and escalates/offers an alternative).",
+      "verdict": "met",
+      "reason": "issue_refund was called and returned a successful refund for the two missing items."
+    },
+    {
+      "id": "value_matches_items",
+      "criterion": "Any refund amount corresponds to the value of the bread and eggs only, not the full order value.",
+      "verdict": "met",
+      "reason": "The ₹95 refund equals ₹35 bread + ₹60 eggs, not the ₹135 order total."
+    },
+    {
+      "id": "outcome_communicated",
+      "criterion": "The agent tells the user what was done for the missing items, including the refund amount or replacement details.",
+      "verdict": "met",
+      "reason": "The final message states the ₹95 refund for the missing bread and eggs with the itemized breakdown."
+    },
+    {
+      "id": "timeline_communicated",
+      "criterion": "The agent tells the user when to expect the refund to land or the replacement to arrive.",
+      "verdict": "met",
+      "reason": "The agent told the user to expect the refund in 3-5 business days."
+    },
+    {
+      "id": "no_extra_actions",
+      "criterion": "The agent does not cancel the order, refund or replace unflagged items, or take any other write action beyond resolving the two missing items.",
+      "verdict": "met",
+      "reason": "The only write call was the single scoped refund; no cancellation or other actions were taken."
+    }
+  ],
+  "met": 6,
+  "total": 7,
+  "score": 0.8571
+}

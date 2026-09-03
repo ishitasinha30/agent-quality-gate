@@ -1,0 +1,25 @@
+{
+  "generated_from_opening_message": "Please cancel order 7731, I ordered it by mistake.",
+  "items": [
+    {
+      "id": "correct_tools_selected",
+      "criterion": "The agent uses get_order (or get_delivery_status) to check the order's current state, and calls cancel_order only if the state is before out_for_delivery; if the order is already out_for_delivery or delivered, no cancel_order call should be attempted."
+    },
+    {
+      "id": "parameters_correct",
+      "criterion": "Every call uses the customer's actual order_id (7731)."
+    },
+    {
+      "id": "tool_results_interpreted_correctly",
+      "criterion": "The agent correctly reads the order state from get_order, and correctly reads whether cancel_order succeeded or returned an error; it does not claim a cancellation the tools did not confirm."
+    },
+    {
+      "id": "no_unnecessary_tool_calls",
+      "criterion": "The agent does not make calls the situation does not need; in particular it does not call cancel_order once the retrieved order state rules it out."
+    },
+    {
+      "id": "required_verification_call_made",
+      "criterion": "Before acting on the cancellation, the agent calls get_order (or get_delivery_status) to establish the order's current state, since eligibility depends on it."
+    }
+  ]
+}

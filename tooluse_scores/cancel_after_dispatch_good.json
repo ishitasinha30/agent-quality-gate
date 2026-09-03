@@ -1,0 +1,34 @@
+{
+  "trajectory_file": "trajectories/cancel_after_dispatch_good.txt",
+  "checklist_file": "tooluse_checklists/cancel_after_dispatch_good.json",
+  "results": [
+    {
+      "id": "correct_tools_selected",
+      "verdict": "met",
+      "reason": "The agent called get_order to check the state and, seeing out_for_delivery, correctly did not attempt cancel_order or any other tool."
+    },
+    {
+      "id": "parameters_correct",
+      "verdict": "met",
+      "reason": "get_order was called with order_id=7731, the customer's order."
+    },
+    {
+      "id": "tool_results_interpreted_correctly",
+      "verdict": "met",
+      "reason": "The agent read status=out_for_delivery correctly ('already out for delivery, so it can't be cancelled') and the ₹130 refund figure matches the sum of the returned item prices."
+    },
+    {
+      "id": "no_unnecessary_tool_calls",
+      "verdict": "met",
+      "reason": "Only get_order was called, and it was needed to determine eligibility."
+    },
+    {
+      "id": "required_verification_call_made",
+      "verdict": "met",
+      "reason": "get_order was called before the agent responded, establishing the order's state."
+    }
+  ],
+  "met": 5,
+  "total": 5,
+  "score": 1.0
+}

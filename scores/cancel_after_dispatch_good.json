@@ -1,0 +1,39 @@
+{
+  "trajectory_file": "trajectories/cancel_after_dispatch_good.txt",
+  "checklist_file": "checklists/cancel_after_dispatch_good.json",
+  "results": [
+    {
+      "id": "order_status_checked",
+      "verdict": "met",
+      "reason": "The agent called get_order(7731) before responding on cancellation and its next message uses the returned status ('already out for delivery')."
+    },
+    {
+      "id": "cancellation_eligibility_determined",
+      "verdict": "met",
+      "reason": "The agent explicitly concluded the order is not cancellable at its current state: 'is already out for delivery, so it can't be cancelled at this point.'"
+    },
+    {
+      "id": "correct_handling_for_state",
+      "verdict": "met",
+      "reason": "Order was out_for_delivery; the agent did not call or claim cancel_order and instead plainly explained cancellation is no longer possible."
+    },
+    {
+      "id": "alternative_offered_when_blocked",
+      "verdict": "met",
+      "reason": "The agent offered two concrete alternatives: decline the delivery for a full refund, or accept it and get a return pickup for a full refund."
+    },
+    {
+      "id": "no_false_confirmation",
+      "verdict": "met",
+      "reason": "The agent never claimed the order was cancelled; the refund it describes is correctly conditioned on the order being marked returned."
+    },
+    {
+      "id": "outcome_communicated",
+      "verdict": "met",
+      "reason": "The agent stated the true outcome and next steps: refuse at the door, then a ₹130 refund to the original payment method within 3-5 business days."
+    }
+  ],
+  "met": 6,
+  "total": 6,
+  "score": 1.0
+}

@@ -1,0 +1,29 @@
+{
+  "trajectory_file": "trajectories/wrong_item_delivered.txt",
+  "claims_file": "grounding_claims/wrong_item_delivered.json",
+  "verdicts": [
+    {
+      "id": "replacement_arranged",
+      "claim": "A replacement Nandini full-cream milk has been arranged / is on its way.",
+      "label": "grounded",
+      "reason": "issue_replacement result: 'Replacement for \"Nandini full-cream milk 1L\" scheduled'."
+    },
+    {
+      "id": "replacement_eta_2h",
+      "claim": "The replacement should arrive within about 2 hours.",
+      "label": "grounded",
+      "reason": "issue_replacement result: 'delivery in 2 hours'."
+    },
+    {
+      "id": "may_keep_amul",
+      "claim": "The customer may keep the Amul milk that was sent by mistake.",
+      "label": "ungrounded",
+      "reason": "No tool result addresses whether the wrongly-delivered item must be returned or can be kept; nothing to check against (not contradicted)."
+    }
+  ],
+  "grounded": 2,
+  "contradicted": 0,
+  "ungrounded": 1,
+  "total": 3,
+  "score": 0.6667
+}

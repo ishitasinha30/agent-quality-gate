@@ -1,0 +1,20 @@
+{
+  "final_message": "A replacement Nandini full-cream milk is on its way and should reach you within about 2 hours. You can keep the Amul milk that was sent by mistake.",
+  "claims": [
+    {
+      "id": "replacement_arranged",
+      "claim": "A replacement Nandini full-cream milk has been arranged / is on its way.",
+      "quote": "A replacement Nandini full-cream milk is on its way"
+    },
+    {
+      "id": "replacement_eta_2h",
+      "claim": "The replacement should arrive within about 2 hours.",
+      "quote": "should reach you within about 2 hours"
+    },
+    {
+      "id": "may_keep_amul",
+      "claim": "The customer may keep the Amul milk that was sent by mistake.",
+      "quote": "You can keep the Amul milk that was sent by mistake"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "generated_from_opening_message": "Please cancel order 7731, I ordered it by mistake.",
+  "items": [
+    {
+      "id": "order_status_checked",
+      "criterion": "The agent looked up order 7731 and checked its current state before acting on the cancellation request."
+    },
+    {
+      "id": "cancellation_eligibility_determined",
+      "criterion": "The agent determined whether the order is still cancellable, given that cancellation is only allowed before the order is out_for_delivery."
+    },
+    {
+      "id": "correct_handling_for_state",
+      "criterion": "If the order is still cancellable the agent cancels it; if it is already out_for_delivery or delivered, the agent explains that cancellation is no longer possible rather than attempting or claiming it."
+    },
+    {
+      "id": "alternative_offered_when_blocked",
+      "criterion": "If the order cannot be cancelled, the agent offers a reasonable alternative such as refusing the order on delivery or returning it afterward."
+    },
+    {
+      "id": "no_false_confirmation",
+      "criterion": "The agent does not tell the customer the order is cancelled, or that a refund is coming, unless that is actually the case."
+    },
+    {
+      "id": "outcome_communicated",
+      "criterion": "The agent clearly states the true final outcome of the cancellation request and what happens next."
+    }
+  ]
+}

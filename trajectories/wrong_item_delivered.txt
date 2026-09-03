@@ -1,0 +1,8 @@
+USER: I ordered Nandini full-cream milk but the delivery had Amul milk instead. I'd like the correct one sent.
+AGENT: Sorry about the mix-up. Let me pull up your order.
+TOOL: get_order(order_id=9052)
+RESULT: order_id=9052, items=[Nandini full-cream milk 1L ₹66, brown bread ₹40, bananas ₹50], status=delivered
+AGENT: I can see Nandini full-cream milk (₹66) on your order. I'll send a replacement of the correct item.
+TOOL: issue_replacement(order_id=9052, item="Nandini full-cream milk 1L", amount=66)
+RESULT: Replacement for "Nandini full-cream milk 1L" scheduled, delivery in 2 hours.
+AGENT: A replacement Nandini full-cream milk is on its way and should reach you within about 2 hours. You can keep the Amul milk that was sent by mistake.

@@ -1,0 +1,29 @@
+{
+  "trajectory_file": "trajectories/example_missing_item.txt",
+  "claims_file": "grounding_claims/example_missing_item.json",
+  "verdicts": [
+    {
+      "id": "refunded_60",
+      "claim": "The customer has been refunded ₹60.",
+      "label": "grounded",
+      "reason": "issue_refund result states 'Refund of ₹60 issued'."
+    },
+    {
+      "id": "refund_for_eggs",
+      "claim": "The refund is for the missing eggs.",
+      "label": "grounded",
+      "reason": "issue_refund was called with item=\"eggs\" and get_order lists 'eggs ₹60'."
+    },
+    {
+      "id": "timeline_3_5_days",
+      "claim": "The refund is expected in 3-5 business days.",
+      "label": "grounded",
+      "reason": "issue_refund result states '3-5 business days'."
+    }
+  ],
+  "grounded": 3,
+  "contradicted": 0,
+  "ungrounded": 0,
+  "total": 3,
+  "score": 1.0
+}

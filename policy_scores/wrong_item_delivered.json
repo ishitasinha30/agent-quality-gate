@@ -1,0 +1,15 @@
+{
+  "trajectory_file": "trajectories/wrong_item_delivered.txt",
+  "config_file": "config/quick_commerce.toml",
+  "applicable": true,
+  "results": [
+    {
+      "id": "wrong_item_disposition",
+      "verdict": "violation",
+      "reason": "After issuing the replacement, the agent unilaterally told the customer \"You can keep the Amul milk that was sent by mistake\" instead of arranging a return pickup or escalating."
+    }
+  ],
+  "compliant": 0,
+  "total": 1,
+  "score": 0.0
+}

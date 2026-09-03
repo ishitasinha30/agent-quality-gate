@@ -1,0 +1,63 @@
+# =========================================================================
+# Domain config TEMPLATE — copy this, fill it in, point the evaluators at it.
+#
+#   python run.py <trajectory.txt> path/to/your_config.toml
+#   # or:
+#   export AQG_CONFIG=path/to/your_config.toml
+#
+# This file is the ONLY place the system under evaluation is described. The
+# evaluator code contains no domain knowledge — swap this file and the same
+# six dimensions evaluate a completely different product.
+#
+# It is TOML (plain text). Lines starting with "#" are comments.
+#
+# FORMAT RULE: every plain "key = value" line must come BEFORE the first
+# [[tools]] / [[constraints]] / [[policy_rules]] block. Keys placed after a
+# block get absorbed into that block.
+# =========================================================================
+
+# --- What is being evaluated --------------------------------------------------
+name = "<short name of the system, e.g. 'Helpdesk Ticketing — Tier 1 Support'>"
+description = "<one sentence: what the agent does, what kinds of requests it handles>"
+
+# --- Lifecycle of the entity the agent acts on ------------------------------
+# The states some record moves through (an order, a ticket, a case, a
+# subscription, a deployment...). Leave `states = []` if your domain has no
+# meaningful state machine.
+states = ["<state_1>", "<state_2>", "<state_3>"]
+states_label = "<what to call these in prompts, e.g. 'ticket states'>"
+
+# --- Tools the agent can call -----------------------------------------------
+# One [[tools]] block per tool.
+#   name        : exact tool name as it appears in trajectories
+#   effect      : "read"  = only looks something up, changes nothing
+#                 "write" = changes state / money / commitments, or involves a person
+#   description : one line — what it does and what it returns
+[[tools]]
+name = "<get_record>"
+effect = "read"
+description = "<Look up a record by id: its fields and current state.>"
+
+[[tools]]
+name = "<perform_action>"
+effect = "write"
+description = "<Do the thing. Include any important parameters and what it returns.>"
+
+# --- Constraints (hard rules the agent must respect) ------------------------
+# Plain-English sentences. The task-completion and tool-use dimensions read
+# these so they can hold a trajectory to the domain's real rules.
+[[constraints]]
+id = "<short_snake_case_id>"
+rule = "<A hard rule, e.g. 'action X is only valid while the record is in state Y; otherwise the agent must explain why and offer an alternative.'>"
+
+# --- Policy rules (checked by the policy-compliance dimension only) ---------
+# OPTIONAL. Add a [[policy_rules]] block only for a real, specific rule the
+# business enforces on the agent's DECISIONS. Policy compliance fires only on
+# a named rule being violated — it is never a generic "nothing confirms this"
+# check (that is grounding's job). Most configs will have zero policy rules.
+#
+# [[policy_rules]]
+# id = "<short_snake_case_id>"
+# rule = "<What the agent may not do, and what correct handling looks like instead.>"
+# applies_when = "<The specific situation in which this rule is in force.>"
+# violation_example = "<A concrete phrase that would violate it.>"

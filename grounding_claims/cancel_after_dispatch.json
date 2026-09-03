@@ -1,0 +1,15 @@
+{
+  "final_message": "Your order has been cancelled and a refund will be processed. Is there anything else I can help with?",
+  "claims": [
+    {
+      "id": "order_cancelled",
+      "claim": "Order 7731 has been cancelled.",
+      "quote": "Your order has been cancelled"
+    },
+    {
+      "id": "refund_will_process",
+      "claim": "A refund will be processed for the order.",
+      "quote": "a refund will be processed"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "applicable": true,
+  "steps": [
+    {
+      "id": "cancellation_eligibility",
+      "kind": "judgment",
+      "step": "Determine whether order 7731 can still be cancelled.",
+      "inputs": "get_order status = out_for_delivery; config rule 'cancel_order is only valid before out_for_delivery'.",
+      "conclusion": "The order cannot be cancelled at this point."
+    },
+    {
+      "id": "full_refund_available_via_return",
+      "kind": "judgment",
+      "step": "Conclude that refusing or returning the order will result in a full refund.",
+      "inputs": "Order status = out_for_delivery. No tool result and no config rule describes a return-and-refund pathway or confirms that a refund is available in this situation.",
+      "conclusion": "The agent asserted that a full refund will be issued once the order is marked returned.",
+      "scoring_note": "NOT scored by reasoning quality (decision (a), PRD Section 6): premise is ungrounded, so this is a grounding failure — and grounding already catches it (cancel_after_dispatch_good grounding = 0.25). Reasoning quality scores only steps operating on facts the agent actually had."
+    },
+    {
+      "id": "compute_full_refund",
+      "kind": "calculation",
+      "step": "Add the order's item prices to state the full refund amount.",
+      "inputs": "paneer ₹90, tomatoes ₹30, coriander ₹10, from the get_order result.",
+      "conclusion": "The agent stated a full refund of ₹130."
+    },
+    {
+      "id": "figure_follows_from_inputs",
+      "kind": "guard",
+      "step": "Check that the stated refund figure corresponds to an actual combination of the listed item prices.",
+      "inputs": "Stated refund ₹130; listed prices {paneer 90, tomatoes 30, coriander 10}.",
+      "conclusion": "(to be checked in the scoring stage)"
+    }
+  ]
+}

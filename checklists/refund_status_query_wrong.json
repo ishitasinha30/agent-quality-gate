@@ -1,0 +1,25 @@
+{
+  "generated_from_opening_message": "When will I get my refund for order 6210? It's been a week.",
+  "items": [
+    {
+      "id": "order_and_refund_identified",
+      "criterion": "The agent looked up order 6210 and located the specific refund the customer is asking about."
+    },
+    {
+      "id": "refund_status_reported",
+      "criterion": "The agent told the customer the current status of that refund (e.g. processing, completed, or failed)."
+    },
+    {
+      "id": "timeline_given",
+      "criterion": "The agent gave the customer a concrete expected timeframe for when the refund will arrive."
+    },
+    {
+      "id": "answer_grounded_in_record",
+      "criterion": "The status and timing the agent stated match what the system record shows, rather than a generic guess."
+    },
+    {
+      "id": "no_unnecessary_actions",
+      "criterion": "The agent did not issue a new refund, replacement, or other change, since the customer only asked for status."
+    }
+  ]
+}

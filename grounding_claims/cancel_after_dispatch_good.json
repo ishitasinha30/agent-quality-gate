@@ -1,0 +1,25 @@
+{
+  "final_message": "Understood. Please decline the delivery when it arrives; once the partner marks it returned, a full refund of ₹130 will be issued to your original payment method, usually within 3-5 business days. Is there anything else I can help with?",
+  "claims": [
+    {
+      "id": "refund_amount_130",
+      "claim": "A full refund would be ₹130.",
+      "quote": "a full refund of ₹130"
+    },
+    {
+      "id": "refund_on_return",
+      "claim": "The refund will be issued once the delivery partner marks the order returned.",
+      "quote": "once the partner marks it returned, a full refund ... will be issued"
+    },
+    {
+      "id": "refund_to_original_method",
+      "claim": "The refund will go to the customer's original payment method.",
+      "quote": "issued to your original payment method"
+    },
+    {
+      "id": "refund_timeline_3_5_days",
+      "claim": "The refund usually arrives within 3-5 business days.",
+      "quote": "usually within 3-5 business days"
+    }
+  ]
+}

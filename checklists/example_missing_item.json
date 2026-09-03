@@ -1,0 +1,30 @@
+{
+  "generated_from_opening_message": "I ordered 3 items — milk, bread, eggs — but only the milk and bread arrived.",
+  "note": "confirm_delivery_status removed per Tool-Use Correctness PRD Section 2 — verification-step criteria move to the tool-use dimension.",
+  "items": [
+    {
+      "id": "verify_order_contents",
+      "criterion": "The agent identified the correct order and confirmed that eggs were one of the items on it."
+    },
+    {
+      "id": "remedy_for_eggs",
+      "criterion": "The agent provided an appropriate remedy (refund or replacement) for the missing eggs."
+    },
+    {
+      "id": "remedy_scoped_to_eggs_value",
+      "criterion": "The remedy covers only the eggs and is valued at the eggs' price, not the full order value."
+    },
+    {
+      "id": "no_extra_actions",
+      "criterion": "The agent did not refund, replace, or cancel anything beyond the missing eggs, including the delivered milk and bread."
+    },
+    {
+      "id": "outcome_communicated",
+      "criterion": "The agent clearly told the customer what remedy was applied for the missing eggs."
+    },
+    {
+      "id": "timeline_communicated",
+      "criterion": "If a refund was issued, the agent told the customer when the money would arrive; if a replacement was issued, the agent gave a delivery timeline."
+    }
+  ]
+}

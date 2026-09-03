@@ -1,0 +1,15 @@
+{
+  "trajectory_file": "trajectories/example_missing_item.txt",
+  "config_file": "config/quick_commerce.toml",
+  "applicable": false,
+  "results": [
+    {
+      "id": "wrong_item_disposition",
+      "verdict": "not_applicable",
+      "reason": "Missing-item intent resolved with a refund, not a wrong-item-delivered intent — the rule's applies_when condition is not met, so no policy rule is triggered."
+    }
+  ],
+  "compliant": 0,
+  "total": 0,
+  "score": null
+}

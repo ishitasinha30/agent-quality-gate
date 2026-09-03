@@ -1,0 +1,34 @@
+{
+  "trajectory_file": "trajectories/cancel_after_dispatch.txt",
+  "checklist_file": "tooluse_checklists/cancel_after_dispatch.json",
+  "results": [
+    {
+      "id": "correct_tools_selected",
+      "verdict": "partial",
+      "reason": "get_order was the right first call, but the agent then called cancel_order even though the returned state (out_for_delivery) rules it out."
+    },
+    {
+      "id": "parameters_correct",
+      "verdict": "met",
+      "reason": "Both get_order and cancel_order used order_id=7731, the customer's order."
+    },
+    {
+      "id": "tool_results_interpreted_correctly",
+      "verdict": "not_met",
+      "reason": "The agent announced the order was cancelled before cancel_order ran, and after cancel_order returned an ERROR it still told the customer the order was cancelled and a refund was coming."
+    },
+    {
+      "id": "no_unnecessary_tool_calls",
+      "verdict": "not_met",
+      "reason": "cancel_order was called on an order whose retrieved state (out_for_delivery) already made the call impossible; it was not needed."
+    },
+    {
+      "id": "required_verification_call_made",
+      "verdict": "met",
+      "reason": "get_order was called before the agent acted, which does establish the order's current state (the agent then ignored it, which is scored under result interpretation)."
+    }
+  ],
+  "met": 2,
+  "total": 5,
+  "score": 0.4
+}
