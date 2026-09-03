@@ -66,10 +66,15 @@ Artifacts land in `checklists/` + `scores/`, `tooluse_checklists/` + `tooluse_sc
 independently of the evaluator. It is **not** written by the evaluator.
 
 ```bash
+python init_golden.py                  # scaffold a pending skeleton entry for every trajectory
+#   -> then fill in score + status + reason by hand for each dimension row
 python compare_to_golden.py            # diff every saved score against golden
 python compare_to_golden.py --only vbcr   # only entries marked verified_by_claude_reasoning
 python compare_to_golden.py --live        # regenerate evaluator output first (needs a key)
 ```
+
+`init_golden.py` only adds what's missing — it never touches an entry you've already
+filled in, and is safe to re-run after adding trajectories.
 
 ## Writing a config for a new domain
 
