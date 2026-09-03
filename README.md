@@ -41,18 +41,20 @@ Untagged lines continue the previous turn. See `trajectories/` for examples.
 ## Running it
 
 ```bash
-pip install -r requirements.txt          # Python 3.11+; only needed for the LLM steps
-export ANTHROPIC_API_KEY=sk-ant-...       # only the extract/score steps call the model
+pip install -r requirements.txt            # Python 3.11+; only needed for the LLM steps
+export ANTHROPIC_API_KEY=sk-ant-...         # only the extract/score steps call the model
+export AQG_CONFIG=config/your_domain.toml   # optional; defaults to config/quick_commerce.toml
+```
 
-# point at your own domain (optional; defaults to config/quick_commerce.toml)
-export AQG_CONFIG=config/your_domain.toml
+One command per dimension. `<transcript>` is any file in `trajectories/`:
 
-python run.py           trajectories/example_missing_item.txt --score   # task completion
-python run_tooluse.py   trajectories/example_missing_item.txt --score   # tool-use correctness
-python run_grounding.py trajectories/refund_status_query.txt  --check   # grounding
-python run_reasoning.py trajectories/multi_item_refund_wrong.txt        # reasoning quality (step 1)
-python run_comm.py      trajectories/example_missing_item.txt           # communication quality
-python run_policy.py    trajectories/wrong_item_delivered.txt           # policy compliance
+```bash
+python run.py           <transcript>.txt --score   # task completion
+python run_tooluse.py   <transcript>.txt --score   # tool-use correctness
+python run_grounding.py <transcript>.txt --check   # grounding
+python run_reasoning.py <transcript>.txt           # reasoning quality (step 1: identify)
+python run_comm.py      <transcript>.txt           # communication quality
+python run_policy.py    <transcript>.txt           # policy compliance
 ```
 
 Each `run_*.py` takes an optional trailing config path that overrides `$AQG_CONFIG`.
@@ -60,17 +62,23 @@ Artifacts land in `checklists/` + `scores/`, `tooluse_checklists/` + `tooluse_sc
 `grounding_claims/` + `grounding_scores/`, `reasoning_steps/` + `reasoning_scores/`,
 `comm_scores/`, `policy_scores/`.
 
+The repo ships with a runnable **quick-commerce** example (`config/quick_commerce.toml` +
+`trajectories/*.txt`). With just a key set, this works out of the box:
+
+```bash
+python run.py trajectories/example_missing_item.txt --score
+```
+
 ## Measuring accuracy
 
 `golden_dataset.json` holds hand-verified verdicts per trajectory + dimension, decided
 independently of the evaluator. It is **not** written by the evaluator.
 
 ```bash
-python init_golden.py                  # scaffold a pending skeleton entry for every trajectory
-#   -> then fill in score + status + reason by hand for each dimension row
-python compare_to_golden.py            # diff every saved score against golden
-python compare_to_golden.py --only vbcr   # only entries marked verified_by_claude_reasoning
-python compare_to_golden.py --live        # regenerate evaluator output first (needs a key)
+python init_golden.py            # scaffold a pending skeleton entry for every trajectory
+#   -> then fill in score + status + reason for each dimension row (by hand, or see below)
+python compare_to_golden.py      # diff every saved score against golden
+python compare_to_golden.py --live   # regenerate evaluator output first (needs a key)
 ```
 
 `init_golden.py` only adds what's missing — it never touches an entry you've already
