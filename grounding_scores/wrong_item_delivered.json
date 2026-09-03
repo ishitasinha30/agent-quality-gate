@@ -6,19 +6,19 @@
       "id": "replacement_arranged",
       "claim": "A replacement Nandini full-cream milk has been arranged / is on its way.",
       "label": "grounded",
-      "reason": "issue_replacement result: 'Replacement for \"Nandini full-cream milk 1L\" scheduled'."
+      "reason": "The issue_replacement tool result confirms a replacement for \"Nandini full-cream milk 1L\" was scheduled for order 9052."
     },
     {
       "id": "replacement_eta_2h",
       "claim": "The replacement should arrive within about 2 hours.",
       "label": "grounded",
-      "reason": "issue_replacement result: 'delivery in 2 hours'."
+      "reason": "The issue_replacement result explicitly states \"delivery in 2 hours.\""
     },
     {
       "id": "may_keep_amul",
       "claim": "The customer may keep the Amul milk that was sent by mistake.",
       "label": "ungrounded",
-      "reason": "No tool result addresses whether the wrongly-delivered item must be returned or can be kept; nothing to check against (not contradicted)."
+      "reason": "No tool result mentions an Amul milk item or any keep/no-return instruction; get_order lists only Nandini milk, bread, and bananas without addressing return handling."
     }
   ],
   "grounded": 2,

@@ -4,28 +4,33 @@
   "results": [
     {
       "id": "correct_tools_selected",
+      "criterion": "The agent uses get_order (or get_delivery_status) to check the order's current state, and calls cancel_order only if the state is before out_for_delivery; if the order is already out_for_delivery or delivered, no cancel_order call should be attempted.",
       "verdict": "met",
-      "reason": "The agent called get_order to check the state and, seeing out_for_delivery, correctly did not attempt cancel_order or any other tool."
+      "reason": "The agent called get_order(7731), saw status=out_for_delivery, and correctly made no cancel_order call, explaining the restriction and offering alternatives instead."
     },
     {
       "id": "parameters_correct",
+      "criterion": "Every call uses the customer's actual order_id (7731).",
       "verdict": "met",
-      "reason": "get_order was called with order_id=7731, the customer's order."
+      "reason": "The single call used order_id=7731, matching the customer's stated order, and the quoted ₹130 matches the returned items (90+30+10)."
     },
     {
       "id": "tool_results_interpreted_correctly",
+      "criterion": "The agent correctly reads the order state from get_order, and correctly reads whether cancel_order succeeded or returned an error; it does not claim a cancellation the tools did not confirm.",
       "verdict": "met",
-      "reason": "The agent read status=out_for_delivery correctly ('already out for delivery, so it can't be cancelled') and the ₹130 refund figure matches the sum of the returned item prices."
+      "reason": "The agent accurately reported the out_for_delivery state and never claimed a cancellation occurred."
     },
     {
       "id": "no_unnecessary_tool_calls",
+      "criterion": "The agent does not make calls the situation does not need; in particular it does not call cancel_order once the retrieved order state rules it out.",
       "verdict": "met",
-      "reason": "Only get_order was called, and it was needed to determine eligibility."
+      "reason": "Only one read call was made and its result directly drove the response; no cancel_order or redundant lookups."
     },
     {
       "id": "required_verification_call_made",
+      "criterion": "Before acting on the cancellation, the agent calls get_order (or get_delivery_status) to establish the order's current state, since eligibility depends on it.",
       "verdict": "met",
-      "reason": "get_order was called before the agent responded, establishing the order's state."
+      "reason": "get_order(order_id=7731) was called before any action, establishing eligibility as required."
     }
   ],
   "met": 5,

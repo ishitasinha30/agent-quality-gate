@@ -6,43 +6,43 @@
       "id": "verify_order_contents",
       "criterion": "The agent looked up the order and confirmed that Nandini full-cream milk was the item the customer actually ordered.",
       "verdict": "met",
-      "reason": "get_order(9052) returned 'Nandini full-cream milk 1L ₹66' in the item list, which the agent then referenced."
+      "reason": "get_order(9052) returned the item list and the agent confirmed 'Nandini full-cream milk (₹66) on your order.'"
     },
     {
       "id": "confirm_wrong_item",
       "criterion": "The agent established that the product delivered (Amul milk) differs from the item ordered.",
       "verdict": "met",
-      "reason": "The agent acknowledged the substitution ('the Amul milk that was sent by mistake') against the ordered Nandini milk; no tool exposes physical delivery contents, so the customer's report plus the order lookup is the available basis."
+      "reason": "The agent verified the ordered item was Nandini via the order lookup and acknowledged the Amul substitution as a mix-up before acting."
     },
     {
       "id": "replacement_of_correct_item",
       "criterion": "The agent arranged for the correct item to be sent, since the customer asked for the right one rather than a refund.",
       "verdict": "met",
-      "reason": "issue_replacement(item=\"Nandini full-cream milk 1L\") returned a scheduled replacement, matching the customer's request for the correct item."
+      "reason": "issue_replacement was called for 'Nandini full-cream milk 1L', matching the customer's request for the correct item rather than a refund."
     },
     {
       "id": "remedy_scoped_to_flagged_item",
       "criterion": "The remedy covers only the mis-delivered milk and its value, not the bread, bananas, or the full order.",
       "verdict": "met",
-      "reason": "The replacement call named only the milk at amount=66, its listed price, leaving the other two items untouched."
+      "reason": "The replacement was issued for only the milk at ₹66, leaving bread and bananas untouched."
     },
     {
       "id": "no_extra_actions",
       "criterion": "The agent did not refund, replace, or cancel anything beyond the one wrong item.",
       "verdict": "met",
-      "reason": "Only one write action occurred (issue_replacement for the milk); no refund or cancellation was made."
+      "reason": "Only one write call (issue_replacement for the milk) appears in the transcript — no refund, extra replacement, or cancellation."
     },
     {
       "id": "outcome_communicated",
       "criterion": "The agent clearly told the customer that a replacement of the correct item has been arranged.",
       "verdict": "met",
-      "reason": "The closing message states 'A replacement Nandini full-cream milk is on its way.'"
+      "reason": "The closing message states 'A replacement Nandini full-cream milk is on its way' and that the Amul milk can be kept."
     },
     {
       "id": "timeline_communicated",
       "criterion": "The agent told the customer when the replacement is expected to arrive.",
       "verdict": "met",
-      "reason": "The closing message gives 'within about 2 hours', matching the tool result."
+      "reason": "The agent relayed the tool's ETA, saying it 'should reach you within about 2 hours.'"
     }
   ],
   "met": 7,

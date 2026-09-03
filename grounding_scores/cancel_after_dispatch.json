@@ -6,13 +6,13 @@
       "id": "order_cancelled",
       "claim": "Order 7731 has been cancelled.",
       "label": "contradicted",
-      "reason": "cancel_order returned 'ERROR: order 7731 is out_for_delivery and can no longer be cancelled', and get_order shows status=out_for_delivery."
+      "reason": "The cancel_order(7731) call returned an ERROR stating the order is out_for_delivery and can no longer be cancelled, directly conflicting with the claim that it was cancelled."
     },
     {
       "id": "refund_will_process",
       "claim": "A refund will be processed for the order.",
       "label": "ungrounded",
-      "reason": "No tool result mentions a refund; there is no issue_refund call and no refund field to trace this to (its premise, the cancellation, is itself contradicted)."
+      "reason": "No tool result in the trajectory returns any refund information; get_order only returned items and status, and cancel_order returned an error with no refund field."
     }
   ],
   "grounded": 0,

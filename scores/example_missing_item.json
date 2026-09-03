@@ -6,37 +6,37 @@
       "id": "verify_order_contents",
       "criterion": "The agent identified the correct order and confirmed that eggs were one of the items on it.",
       "verdict": "met",
-      "reason": "get_order(8341) returned the three items the customer named including 'eggs ₹60', and the agent acted on that order."
+      "reason": "get_order(8341) returned the item list including eggs ₹60, which the agent confirmed."
     },
     {
       "id": "remedy_for_eggs",
       "criterion": "The agent provided an appropriate remedy (refund or replacement) for the missing eggs.",
       "verdict": "met",
-      "reason": "issue_refund for the eggs returned 'Refund of ₹60 issued'."
+      "reason": "The agent issued a refund specifically for the missing eggs."
     },
     {
       "id": "remedy_scoped_to_eggs_value",
       "criterion": "The remedy covers only the eggs and is valued at the eggs' price, not the full order value.",
       "verdict": "met",
-      "reason": "The refund was ₹60, exactly the eggs' listed price, not the ₹135 order total."
+      "reason": "The refund was ₹60, exactly the eggs' price, not the ₹135 order total."
     },
     {
       "id": "no_extra_actions",
       "criterion": "The agent did not refund, replace, or cancel anything beyond the missing eggs, including the delivered milk and bread.",
       "verdict": "met",
-      "reason": "Only a single refund call scoped to the eggs was made; no action touched the delivered milk or bread."
+      "reason": "Only one write call was made (refund for eggs); no action touched milk, bread, or the order as a whole."
     },
     {
       "id": "outcome_communicated",
       "criterion": "The agent clearly told the customer what remedy was applied for the missing eggs.",
       "verdict": "met",
-      "reason": "The agent told the customer 'You've been refunded ₹60 for the missing eggs.'"
+      "reason": "The closing message states '₹60 refunded for the missing eggs.'"
     },
     {
       "id": "timeline_communicated",
       "criterion": "If a refund was issued, the agent told the customer when the money would arrive; if a replacement was issued, the agent gave a delivery timeline.",
       "verdict": "met",
-      "reason": "The closing message stated the refund is 'expected in 3-5 business days,' matching the tool result."
+      "reason": "The agent told the customer the refund is expected in 3-5 business days."
     }
   ],
   "met": 6,

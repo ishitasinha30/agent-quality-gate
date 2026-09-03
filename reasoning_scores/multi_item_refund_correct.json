@@ -8,19 +8,19 @@
       "id": "identify_missing_items",
       "kind": "inference",
       "verdict": "correct",
-      "reason": "Customer said only the milk arrived; order = [milk, bread, eggs], so bread and eggs missing follows."
+      "reason": "Order contained milk, bread, eggs and customer received only milk, so bread and eggs are the undelivered items."
     },
     {
       "id": "compute_refund_total",
       "kind": "calculation",
       "verdict": "correct",
-      "reason": "35 + 60 = 95, which is the figure the agent stated and passed to issue_refund."
+      "reason": "35 + 60 = 95, matching the agent's stated and submitted amount of ₹95."
     },
     {
       "id": "figure_follows_from_inputs",
       "kind": "guard",
       "verdict": "correct",
-      "reason": "95 = 35 + 60 (bread + eggs), a real combination of the listed prices {40, 35, 60}."
+      "reason": "₹95 equals the real combination bread 35 + eggs 60 from the listed prices, so it is not an invented figure."
     }
   ],
   "correct": 3,

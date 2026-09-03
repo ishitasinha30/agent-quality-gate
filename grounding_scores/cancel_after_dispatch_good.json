@@ -6,25 +6,25 @@
       "id": "refund_amount_130",
       "claim": "A full refund would be ₹130.",
       "label": "grounded",
-      "reason": "get_order items are paneer ₹90 + tomatoes ₹30 + coriander ₹10 = ₹130, so a full refund of ₹130 follows from the tool result."
+      "reason": "get_order(7731) items sum to ₹90 + ₹30 + ₹10 = ₹130, matching the stated full refund amount."
     },
     {
       "id": "refund_on_return",
       "claim": "The refund will be issued once the delivery partner marks the order returned.",
       "label": "ungrounded",
-      "reason": "No tool result describes a return-and-refund process; only get_order was called, and it has no such field."
+      "reason": "The get_order result only shows status=out_for_delivery and contains no refund-trigger or return-processing information."
     },
     {
       "id": "refund_to_original_method",
       "claim": "The refund will go to the customer's original payment method.",
       "label": "ungrounded",
-      "reason": "No tool result contains a payment-method field."
+      "reason": "No tool result returned any payment method or refund destination data for order 7731."
     },
     {
       "id": "refund_timeline_3_5_days",
       "claim": "The refund usually arrives within 3-5 business days.",
       "label": "ungrounded",
-      "reason": "No tool result states a refund timeline; this is a general policy statement (same class as PRD Section 7)."
+      "reason": "No tool result mentions refund processing timelines; this is a generic policy statement unsupported by the order data."
     }
   ],
   "grounded": 1,

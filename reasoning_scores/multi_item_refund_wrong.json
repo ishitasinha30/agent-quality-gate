@@ -8,19 +8,19 @@
       "id": "identify_missing_items",
       "kind": "inference",
       "verdict": "correct",
-      "reason": "Customer said only the milk arrived; order = [milk, bread, eggs], so bread and eggs missing follows."
+      "reason": "Order contained milk, bread, eggs and only milk arrived, so bread and eggs are correctly identified as missing."
     },
     {
       "id": "compute_refund_total",
       "kind": "calculation",
       "verdict": "incorrect",
-      "reason": "35 + 60 = 95, but the agent stated 85."
+      "reason": "35 + 60 = 95, not the ₹85 the agent stated and passed to issue_refund."
     },
     {
       "id": "figure_follows_from_inputs",
       "kind": "guard",
       "verdict": "incorrect",
-      "reason": "85 matches no combination of {40, 35, 60} (75, 100, 95, 135 are the options) — a number from nowhere."
+      "reason": "No combination of {40, 35, 60} yields 85 (75, 95, 100, 135, or singles), so ₹85 is a number from nowhere — traceable to the earlier faulty addition in compute_refund_total."
     }
   ],
   "correct": 1,

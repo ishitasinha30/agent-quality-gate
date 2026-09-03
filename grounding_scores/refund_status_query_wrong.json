@@ -6,19 +6,19 @@
       "id": "refund_amount",
       "claim": "The customer's refund is for ₹450 (for the olive oil).",
       "label": "grounded",
-      "reason": "The get_order result gives refund.amount=450 and refund.item=\"olive oil 500ml\", directly supporting both the amount and the item."
+      "reason": "get_order(6210) returned refund={item: \"olive oil 500ml\", amount: 450}, matching the ₹450 olive oil refund."
     },
     {
       "id": "refund_completed_3_days_ago",
       "claim": "The refund was completed 3 days ago.",
       "label": "contradicted",
-      "reason": "The get_order result shows refund.status=processing and refund.initiated='6 days ago', which conflicts with both 'completed' and '3 days ago'."
+      "reason": "The tool result shows refund status=processing, initiated 6 days ago with 1-2 more business days expected, not completed 3 days ago."
     },
     {
       "id": "refund_credited_to_account",
       "claim": "The refund has already been credited to the customer's account.",
       "label": "contradicted",
-      "reason": "refund.status=processing means the refund is not yet complete, so 'already credited' conflicts with the returned status; no field reports a crediting event."
+      "reason": "The refund field states status: processing and expected: 1-2 more business days, conflicting with the claim that funds are already credited."
     }
   ],
   "grounded": 1,

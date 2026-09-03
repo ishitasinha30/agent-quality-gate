@@ -4,28 +4,33 @@
   "results": [
     {
       "id": "correct_tools_selected",
+      "criterion": "The agent uses get_order (or get_order_items) to look up the order, and issue_replacement to send the correct item, since the customer asked for the right one to be sent; it does not use issue_refund or cancel_order.",
       "verdict": "met",
-      "reason": "The agent called get_order to look up the order and issue_replacement to send the correct item, matching the customer's request; it used no refund or cancel tool."
+      "reason": "The agent called get_order to look up order 9052 and issue_replacement to send the correct item, with no refund or cancellation calls."
     },
     {
       "id": "parameters_correct",
+      "criterion": "get_order is called with the customer's own order_id; issue_replacement names the mis-delivered item (\"Nandini full-cream milk\"), and any amount matches that item's price from the order record.",
       "verdict": "met",
-      "reason": "get_order used order_id=9052, and issue_replacement used item=\"Nandini full-cream milk 1L\", amount=66 — the item's listed price in the returned record."
+      "reason": "issue_replacement used order_id=9052 with item \"Nandini full-cream milk 1L\" and amount=66, exactly matching the item and price in the get_order result."
     },
     {
       "id": "tool_results_interpreted_correctly",
+      "criterion": "The agent reads the get_order result correctly: confirms Nandini full-cream milk was on the order and uses its details for the replacement.",
       "verdict": "met",
-      "reason": "The agent read the get_order result correctly, confirming \"Nandini full-cream milk (₹66) on your order\" before issuing the replacement."
+      "reason": "The agent correctly noted from the get_order result that Nandini full-cream milk 1L (₹66) was on the order and used those details for the replacement."
     },
     {
       "id": "no_unnecessary_tool_calls",
+      "criterion": "The agent does not call tools the request does not need, such as get_delivery_status, get_delivery_partner_eta, or escalate_to_human.",
       "verdict": "met",
-      "reason": "Only get_order and issue_replacement were called and both results were used; no needless calls such as get_delivery_status or escalate_to_human."
+      "reason": "Only get_order and issue_replacement were called; no delivery-status, ETA, or escalation calls were made."
     },
     {
       "id": "required_verification_call_made",
+      "criterion": "No tool in the config can confirm the physical contents of what was handed over (get_order shows what was ordered, not delivered), so no verification call could establish the wrong-item claim; this criterion cannot be failed for a missing verification here.",
       "verdict": "met",
-      "reason": "No tool can confirm the physical contents of the delivery, so there was no verification call to miss; not penalized per PRD Section 6."
+      "reason": "Per the criterion, no tool can verify physical delivery contents, so this cannot be failed and the agent's get_order lookup was the appropriate available check."
     }
   ],
   "met": 5,

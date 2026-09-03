@@ -6,31 +6,31 @@
       "id": "order_and_refund_identified",
       "criterion": "The agent looked up order 6210 and located the specific refund the customer is asking about.",
       "verdict": "met",
-      "reason": "get_order(6210) returned a refund record for 'olive oil 500ml', which the agent referenced directly."
+      "reason": "The agent called get_order(6210) and identified the ₹450 olive oil refund specifically."
     },
     {
       "id": "refund_status_reported",
       "criterion": "The agent told the customer the current status of that refund (e.g. processing, completed, or failed).",
       "verdict": "met",
-      "reason": "The agent said the refund 'is still processing', matching the record's status field."
+      "reason": "The agent stated the refund is 'still processing', matching the record's status=processing."
     },
     {
       "id": "timeline_given",
       "criterion": "The agent gave the customer a concrete expected timeframe for when the refund will arrive.",
       "verdict": "met",
-      "reason": "The agent stated 'within the next 1-2 business days' and an overall 'up to 7 business days' ceiling."
+      "reason": "The agent said it should complete within the next 1-2 business days."
     },
     {
       "id": "answer_grounded_in_record",
       "criterion": "The status and timing the agent stated match what the system record shows, rather than a generic guess.",
       "verdict": "met",
-      "reason": "The record shows status=processing, initiated 6 days ago, expected 1-2 more business days; the agent's answer matches on all three points."
+      "reason": "Amount (₹450), item, initiation (6 days ago) and 1-2 business day window all match the get_order result rather than being generic."
     },
     {
       "id": "no_unnecessary_actions",
       "criterion": "The agent did not issue a new refund, replacement, or other change, since the customer only asked for status.",
       "verdict": "met",
-      "reason": "The only tool call was get_order; no write action was taken."
+      "reason": "Only a single read call (get_order) was made; no refund, replacement, cancellation, or escalation was issued."
     }
   ],
   "met": 5,

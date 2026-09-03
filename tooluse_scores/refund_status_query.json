@@ -4,28 +4,33 @@
   "results": [
     {
       "id": "correct_tools_selected",
+      "criterion": "Uses get_order (a read tool) to retrieve the refund's current state; this is a read-only status query, so no write tool (issue_refund, issue_replacement, cancel_order) is called.",
       "verdict": "met",
-      "reason": "Only get_order was called — the right read tool for a status query; no write tool was used."
+      "reason": "Only get_order, a read tool, was called; no write tools were invoked for this status query."
     },
     {
       "id": "parameters_correct",
+      "criterion": "get_order is called with the customer's own order_id (6210).",
       "verdict": "met",
-      "reason": "get_order was called with order_id=6210, the customer's order."
+      "reason": "get_order was called with order_id=6210, matching the customer's stated order and the returned record."
     },
     {
       "id": "tool_results_interpreted_correctly",
+      "criterion": "The agent reads the refund fields from the result correctly (status, initiated date, expected timeframe) and reports them without distortion.",
       "verdict": "met",
-      "reason": "The agent reported status=processing, initiated 6 days ago, and expected 1-2 more business days — all matching the returned refund fields."
+      "reason": "The agent reported ₹450 olive oil refund, processing, initiated 6 days ago, completing in 1-2 business days, exactly as the result stated."
     },
     {
       "id": "no_unnecessary_tool_calls",
+      "criterion": "No tools the request does not need are called (delivery lookups, escalate_to_human, any write tool).",
       "verdict": "met",
-      "reason": "get_order was the only call."
+      "reason": "No delivery lookups, escalation, or write calls were made beyond the single needed get_order."
     },
     {
       "id": "required_verification_call_made",
+      "criterion": "The single lookup that answers the question (get_order / refund status) is made; a status query has no separate pre-action verification beyond that.",
       "verdict": "met",
-      "reason": "The lookup needed to answer the question was made."
+      "reason": "The one lookup that answers the question, get_order(6210), was made before responding."
     }
   ],
   "met": 5,

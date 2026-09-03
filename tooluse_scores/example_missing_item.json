@@ -6,31 +6,31 @@
       "id": "correct_tools_selected",
       "criterion": "The agent uses get_order (or get_order_items) to look up the order and its contents, and issue_refund or issue_replacement to remedy the missing item; it does not use unrelated write tools such as cancel_order.",
       "verdict": "met",
-      "reason": "The agent called get_order to retrieve the order contents and issue_refund to remedy the missing eggs, with no unrelated write tools such as cancel_order."
+      "reason": "The agent called get_order to retrieve the order and issue_refund to remedy the missing eggs, with no unrelated write tools like cancel_order."
     },
     {
       "id": "parameters_correct",
       "criterion": "get_order is called with the customer's own order_id; the refund or replacement names the missing item (\"eggs\"), and any refund amount equals that item's price from the order record, not the full order value.",
       "verdict": "met",
-      "reason": "issue_refund used item=\"eggs\" with amount=60, exactly matching the eggs price returned by get_order(order_id=8341), not the ₹135 order total."
+      "reason": "issue_refund used order_id=8341 matching the retrieved record and item=\"eggs\" with amount=60, exactly the eggs' per-item price returned by get_order rather than the ₹135 order total."
     },
     {
       "id": "tool_results_interpreted_correctly",
       "criterion": "The agent reads the get_order result correctly: identifies eggs as the item not delivered, notes the order status, and takes the refund amount from the returned per-item price.",
       "verdict": "met",
-      "reason": "The agent correctly read the get_order result (items milk ₹40, bread ₹35, eggs ₹60, status=delivered) and identified eggs at ₹60 as the undelivered item."
+      "reason": "The agent correctly identified eggs (₹60) as the undelivered item from the get_order result and drew the refund amount from the returned per-item price."
     },
     {
       "id": "no_unnecessary_tool_calls",
       "criterion": "The agent does not call tools the request does not need, such as get_delivery_partner_eta or escalate_to_human.",
       "verdict": "met",
-      "reason": "Only get_order and issue_refund were called, and both results were used; no get_delivery_partner_eta or escalate_to_human calls were made."
+      "reason": "Only get_order and issue_refund were called; no get_delivery_partner_eta or escalate_to_human."
     },
     {
       "id": "required_verification_call_made",
       "criterion": "Before issuing the refund or replacement, the agent calls get_delivery_status to confirm the eggs are genuinely undelivered and not still arriving on a separate delivery leg; a verification tool does apply here, so skipping it is a miss.",
       "verdict": "not_met",
-      "reason": "The agent never called get_delivery_status before issuing the refund, relying solely on get_order's status field to confirm the eggs were genuinely undelivered."
+      "reason": "The agent never called get_delivery_status before issuing the refund, relying solely on the get_order status field to confirm the eggs were genuinely undelivered."
     }
   ],
   "met": 4,

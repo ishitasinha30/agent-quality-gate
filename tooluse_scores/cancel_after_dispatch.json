@@ -4,28 +4,33 @@
   "results": [
     {
       "id": "correct_tools_selected",
-      "verdict": "partial",
-      "reason": "get_order was the right first call, but the agent then called cancel_order even though the returned state (out_for_delivery) rules it out."
+      "criterion": "The agent uses get_order (or get_delivery_status) to check the order's current state, and calls cancel_order only if the state is before out_for_delivery; if the order is already out_for_delivery or delivered, no cancel_order call should be attempted.",
+      "verdict": "not_met",
+      "reason": "get_order returned status=out_for_delivery, yet the agent still called cancel_order instead of explaining ineligibility and offering an alternative."
     },
     {
       "id": "parameters_correct",
+      "criterion": "Every call uses the customer's actual order_id (7731).",
       "verdict": "met",
-      "reason": "Both get_order and cancel_order used order_id=7731, the customer's order."
+      "reason": "Both get_order and cancel_order used order_id=7731, matching the customer's order and the retrieved record."
     },
     {
       "id": "tool_results_interpreted_correctly",
+      "criterion": "The agent correctly reads the order state from get_order, and correctly reads whether cancel_order succeeded or returned an error; it does not claim a cancellation the tools did not confirm.",
       "verdict": "not_met",
-      "reason": "The agent announced the order was cancelled before cancel_order ran, and after cancel_order returned an ERROR it still told the customer the order was cancelled and a refund was coming."
+      "reason": "The agent announced cancellation before the call returned and then repeated 'Your order has been cancelled and a refund will be processed' despite cancel_order returning an explicit ERROR."
     },
     {
       "id": "no_unnecessary_tool_calls",
+      "criterion": "The agent does not make calls the situation does not need; in particular it does not call cancel_order once the retrieved order state rules it out.",
       "verdict": "not_met",
-      "reason": "cancel_order was called on an order whose retrieved state (out_for_delivery) already made the call impossible; it was not needed."
+      "reason": "The cancel_order call was ruled out by the out_for_delivery status already retrieved by get_order."
     },
     {
       "id": "required_verification_call_made",
+      "criterion": "Before acting on the cancellation, the agent calls get_order (or get_delivery_status) to establish the order's current state, since eligibility depends on it.",
       "verdict": "met",
-      "reason": "get_order was called before the agent acted, which does establish the order's current state (the agent then ignored it, which is scored under result interpretation)."
+      "reason": "get_order(order_id=7731) was called before the cancel_order write, establishing the order state."
     }
   ],
   "met": 2,

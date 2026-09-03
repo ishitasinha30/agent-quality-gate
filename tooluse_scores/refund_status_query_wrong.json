@@ -4,28 +4,33 @@
   "results": [
     {
       "id": "correct_tools_selected",
+      "criterion": "Uses get_order (a read tool) to retrieve the refund's current state; this is a read-only status query, so no write tool (issue_refund, issue_replacement, cancel_order) is called.",
       "verdict": "met",
-      "reason": "Only get_order was called — the right read tool; no write tool was used."
+      "reason": "The agent used only the read tool get_order and called no write tools for this status query."
     },
     {
       "id": "parameters_correct",
+      "criterion": "get_order is called with the customer's own order_id (6210).",
       "verdict": "met",
-      "reason": "get_order was called with order_id=6210."
+      "reason": "get_order was called with order_id=6210, matching the customer's stated order and the returned record."
     },
     {
       "id": "tool_results_interpreted_correctly",
+      "criterion": "The agent reads the refund fields from the result correctly (status, initiated date, expected timeframe) and reports them without distortion.",
       "verdict": "not_met",
-      "reason": "The result said status=processing, initiated 6 days ago; the agent reported the refund as 'completed 3 days ago and already credited' — the result was misread/ignored."
+      "reason": "The result showed refund status 'processing', initiated 6 days ago, expected 1-2 more business days, but the agent claimed it was 'completed 3 days ago and already credited'."
     },
     {
       "id": "no_unnecessary_tool_calls",
+      "criterion": "No tools the request does not need are called (delivery lookups, escalate_to_human, any write tool).",
       "verdict": "met",
-      "reason": "get_order was the only call."
+      "reason": "Only the single needed get_order call was made, with no delivery lookups, escalation, or writes."
     },
     {
       "id": "required_verification_call_made",
+      "criterion": "The single lookup that answers the question (get_order / refund status) is made; a status query has no separate pre-action verification beyond that.",
       "verdict": "met",
-      "reason": "The lookup was made."
+      "reason": "The answering lookup get_order(order_id=6210) was made and no separate pre-action verification applies to a status query."
     }
   ],
   "met": 4,

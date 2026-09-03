@@ -4,33 +4,39 @@
   "results": [
     {
       "id": "order_status_checked",
+      "criterion": "The agent looked up order 7731 and checked its current state before acting on the cancellation request.",
       "verdict": "met",
-      "reason": "The agent called get_order(7731) before responding on cancellation and its next message uses the returned status ('already out for delivery')."
+      "reason": "The agent called get_order(7731) before responding and read its status of out_for_delivery."
     },
     {
       "id": "cancellation_eligibility_determined",
+      "criterion": "The agent determined whether the order is still cancellable, given that cancellation is only allowed before the order is out_for_delivery.",
       "verdict": "met",
-      "reason": "The agent explicitly concluded the order is not cancellable at its current state: 'is already out for delivery, so it can't be cancelled at this point.'"
+      "reason": "The agent correctly concluded from the out_for_delivery status that the order is past the cancellation window."
     },
     {
       "id": "correct_handling_for_state",
+      "criterion": "If the order is still cancellable the agent cancels it; if it is already out_for_delivery or delivered, the agent explains that cancellation is no longer possible rather than attempting or claiming it.",
       "verdict": "met",
-      "reason": "Order was out_for_delivery; the agent did not call or claim cancel_order and instead plainly explained cancellation is no longer possible."
+      "reason": "The agent did not call cancel_order and instead explained that cancellation is no longer possible because the order is out for delivery."
     },
     {
       "id": "alternative_offered_when_blocked",
+      "criterion": "If the order cannot be cancelled, the agent offers a reasonable alternative such as refusing the order on delivery or returning it afterward.",
       "verdict": "met",
-      "reason": "The agent offered two concrete alternatives: decline the delivery for a full refund, or accept it and get a return pickup for a full refund."
+      "reason": "The agent offered both refusing the order at the door and a post-delivery return pickup, each with a full refund."
     },
     {
       "id": "no_false_confirmation",
+      "criterion": "The agent does not tell the customer the order is cancelled, or that a refund is coming, unless that is actually the case.",
       "verdict": "met",
-      "reason": "The agent never claimed the order was cancelled; the refund it describes is correctly conditioned on the order being marked returned."
+      "reason": "The agent never claimed the order was cancelled and framed the refund as conditional on the partner marking the order returned."
     },
     {
       "id": "outcome_communicated",
+      "criterion": "The agent clearly states the true final outcome of the cancellation request and what happens next.",
       "verdict": "met",
-      "reason": "The agent stated the true outcome and next steps: refuse at the door, then a ₹130 refund to the original payment method within 3-5 business days."
+      "reason": "The agent stated the order cannot be cancelled, confirmed the refusal path, and gave the correct ₹130 amount with a 3-5 business day refund timeline."
     }
   ],
   "met": 6,
