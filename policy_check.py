@@ -29,6 +29,7 @@ from dataclasses import dataclass
 
 from config import DEFAULT_CONFIG_PATH, PolicyRule, load_config
 from trajectory import Trajectory
+from jsonlist import extract_json_list
 
 MODEL = "claude-opus-5"
 
@@ -98,14 +99,6 @@ def _transcript_text(traj: Trajectory) -> str:
     return "\n".join(f"{t.role}: {t.text}" for t in traj.turns)
 
 
-def _extract_json_array(text: str) -> str:
-    fenced = re.search(r"```(?:json)?\s*(\[.*?\])\s*```", text, re.DOTALL)
-    if fenced:
-        return fenced.group(1)
-    bare = re.search(r"\[.*\]", text, re.DOTALL)
-    if bare:
-        return bare.group(0)
-    raise ValueError(f"no JSON array found in model reply:\n{text}")
 
 
 def check_policy_compliance(traj: Trajectory, rules: list[PolicyRule]) -> PolicyReport:
@@ -138,7 +131,7 @@ Check every rule."""
         messages=[{"role": "user", "content": user_prompt}],
     )
     text = "".join(block.text for block in message.content if block.type == "text")
-    rows = json.loads(_extract_json_array(text))
+    rows = extract_json_list(text)
     return PolicyReport(results=[PolicyResult(id=r["id"], verdict=r["verdict"], reason=r["reason"]) for r in rows])
 
 

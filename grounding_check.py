@@ -25,6 +25,7 @@ from dataclasses import dataclass
 
 from grounding_claims import Claim
 from trajectory import Trajectory
+from jsonlist import extract_json_list
 
 MODEL = "claude-opus-5"
 
@@ -94,14 +95,6 @@ def _tool_results_text(traj: Trajectory) -> str:
     return "\n".join(lines) if lines else "(no tool calls in this trajectory)"
 
 
-def _extract_json_array(text: str) -> str:
-    fenced = re.search(r"```(?:json)?\s*(\[.*?\])\s*```", text, re.DOTALL)
-    if fenced:
-        return fenced.group(1)
-    bare = re.search(r"\[.*\]", text, re.DOTALL)
-    if bare:
-        return bare.group(0)
-    raise ValueError(f"no JSON array found in model reply:\n{text}")
 
 
 def check_grounding(claims: list[Claim], traj: Trajectory) -> GroundingReport:
@@ -129,7 +122,7 @@ Label every claim."""
         messages=[{"role": "user", "content": user_prompt}],
     )
     text = "".join(block.text for block in message.content if block.type == "text")
-    rows = json.loads(_extract_json_array(text))
+    rows = extract_json_list(text)
 
     by_id = {c.id: c.claim for c in claims}
     verdicts = [

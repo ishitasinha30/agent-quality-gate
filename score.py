@@ -23,6 +23,7 @@ from dataclasses import dataclass
 from checklist import ChecklistItem
 from config import DomainConfig
 from trajectory import Trajectory
+from jsonlist import extract_json_list
 
 MODEL = "claude-opus-5"
 
@@ -48,7 +49,8 @@ Rules:
   explanation plus an alternative counts as "met".
 - Give a one-sentence reason that cites what in the transcript decided it.
 
-Respond with ONLY a JSON array. Each element:
+Respond with ONLY a JSON array — the whole reply must be one `[ ... ]`, no prose before
+or after, no markdown fences, not one object per line. Each element:
   {"id": "<criterion id>", "verdict": "met" | "partial" | "not_met", "reason": "<one sentence>"}"""
 
 
@@ -81,14 +83,6 @@ def _trajectory_as_text(traj: Trajectory) -> str:
     return "\n".join(f"{t.role}: {t.text}" for t in traj.turns)
 
 
-def _extract_json_array(text: str) -> str:
-    fenced = re.search(r"```(?:json)?\s*(\[.*?\])\s*```", text, re.DOTALL)
-    if fenced:
-        return fenced.group(1)
-    bare = re.search(r"\[.*\]", text, re.DOTALL)
-    if bare:
-        return bare.group(0)
-    raise ValueError(f"no JSON array found in model reply:\n{text}")
 
 
 def score_trajectory(
@@ -122,7 +116,7 @@ Mark every criterion."""
         messages=[{"role": "user", "content": user_prompt}],
     )
     text = "".join(block.text for block in message.content if block.type == "text")
-    rows = json.loads(_extract_json_array(text))
+    rows = extract_json_list(text)
 
     by_id = {c.id: c.criterion for c in checklist}
     results = [

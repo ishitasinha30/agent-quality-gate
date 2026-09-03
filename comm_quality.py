@@ -25,6 +25,7 @@ import re
 from dataclasses import dataclass
 
 from trajectory import Trajectory
+from jsonlist import extract_json_list
 
 MODEL = "claude-opus-5"
 
@@ -98,14 +99,6 @@ def final_agent_message(traj: Trajectory) -> str | None:
     return None
 
 
-def _extract_json_array(text: str) -> str:
-    fenced = re.search(r"```(?:json)?\s*(\[.*?\])\s*```", text, re.DOTALL)
-    if fenced:
-        return fenced.group(1)
-    bare = re.search(r"\[.*\]", text, re.DOTALL)
-    if bare:
-        return bare.group(0)
-    raise ValueError(f"no JSON array found in model reply:\n{text}")
 
 
 def score_comm_quality(final_message: str) -> CommReport:
@@ -121,7 +114,7 @@ def score_comm_quality(final_message: str) -> CommReport:
         messages=[{"role": "user", "content": f'FINAL MESSAGE:\n"{final_message}"\n\nRate it.'}],
     )
     text = "".join(block.text for block in message.content if block.type == "text")
-    rows = json.loads(_extract_json_array(text))
+    rows = extract_json_list(text)
     return CommReport(results=[CommResult(id=r["id"], verdict=r["verdict"], reason=r["reason"]) for r in rows])
 
 

@@ -12,6 +12,7 @@ config, not from this file. The LLM call is kept in ONE function, `generate_chec
 """
 
 from __future__ import annotations
+from jsonlist import extract_json_list
 
 import json
 import os
@@ -75,15 +76,6 @@ Write the checklist for this request. Respond with ONLY a JSON array. Each eleme
   {{"id": "<short_snake_case_id>", "criterion": "<one sentence, yes/no checkable>"}}"""
 
 
-def _extract_json_array(text: str) -> str:
-    """Model replies should be a bare JSON array, but tolerate ```json fences / stray prose."""
-    fenced = re.search(r"```(?:json)?\s*(\[.*?\])\s*```", text, re.DOTALL)
-    if fenced:
-        return fenced.group(1)
-    bare = re.search(r"\[.*\]", text, re.DOTALL)
-    if bare:
-        return bare.group(0)
-    raise ValueError(f"no JSON array found in model reply:\n{text}")
 
 
 def generate_checklist(opening_message: str, cfg: DomainConfig) -> list[ChecklistItem]:
@@ -99,7 +91,7 @@ def generate_checklist(opening_message: str, cfg: DomainConfig) -> list[Checklis
         messages=[{"role": "user", "content": _build_user_prompt(opening_message, cfg)}],
     )
     text = "".join(block.text for block in message.content if block.type == "text")
-    raw = json.loads(_extract_json_array(text))
+    raw = extract_json_list(text)
     return [ChecklistItem(id=row["id"], criterion=row["criterion"]) for row in raw]
 
 

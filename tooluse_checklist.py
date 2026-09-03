@@ -14,6 +14,7 @@ The LLM call is the single function `generate_tooluse_checklist`.
 """
 
 from __future__ import annotations
+from jsonlist import extract_json_list
 
 import json
 import os
@@ -81,14 +82,6 @@ THE USER'S OPENING MESSAGE:
 Write the five-item tool-use checklist for this request."""
 
 
-def _extract_json_array(text: str) -> str:
-    fenced = re.search(r"```(?:json)?\s*(\[.*?\])\s*```", text, re.DOTALL)
-    if fenced:
-        return fenced.group(1)
-    bare = re.search(r"\[.*\]", text, re.DOTALL)
-    if bare:
-        return bare.group(0)
-    raise ValueError(f"no JSON array found in model reply:\n{text}")
 
 
 def generate_tooluse_checklist(opening_message: str, cfg: DomainConfig) -> list[ToolUseCriterion]:
@@ -104,7 +97,7 @@ def generate_tooluse_checklist(opening_message: str, cfg: DomainConfig) -> list[
         messages=[{"role": "user", "content": _build_user_prompt(opening_message, cfg)}],
     )
     text = "".join(block.text for block in message.content if block.type == "text")
-    rows = json.loads(_extract_json_array(text))
+    rows = extract_json_list(text)
     return [ToolUseCriterion(id=row["id"], criterion=row["criterion"]) for row in rows]
 
 

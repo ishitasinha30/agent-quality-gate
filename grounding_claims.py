@@ -23,6 +23,7 @@ import re
 from dataclasses import dataclass
 
 from trajectory import Trajectory
+from jsonlist import extract_json_list
 
 MODEL = "claude-opus-5"
 
@@ -64,14 +65,6 @@ def _final_agent_message(traj: Trajectory) -> str | None:
     return None
 
 
-def _extract_json_array(text: str) -> str:
-    fenced = re.search(r"```(?:json)?\s*(\[.*?\])\s*```", text, re.DOTALL)
-    if fenced:
-        return fenced.group(1)
-    bare = re.search(r"\[.*\]", text, re.DOTALL)
-    if bare:
-        return bare.group(0)
-    raise ValueError(f"no JSON array found in model reply:\n{text}")
 
 
 def extract_claims(traj: Trajectory) -> list[Claim]:
@@ -100,7 +93,7 @@ Extract the factual claims."""
         messages=[{"role": "user", "content": user_prompt}],
     )
     text = "".join(block.text for block in message.content if block.type == "text")
-    rows = json.loads(_extract_json_array(text))
+    rows = extract_json_list(text)
     return [Claim(id=r["id"], claim=r["claim"], quote=r["quote"]) for r in rows]
 
 
