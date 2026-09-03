@@ -3,7 +3,7 @@ Compare each dimension's evaluator output against golden_dataset.json.
 
 golden_dataset.json holds hand-verified verdicts. This script runs (or reads) the
 evaluator's own output for the same trajectory + dimension and reports where they agree
-and where they disagree — the accuracy check the dimension PRDs call for.
+and where they disagree — the accuracy check for each dimension.
 
 usage:
     python compare_to_golden.py                      # every scored golden entry, from saved output

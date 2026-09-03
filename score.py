@@ -164,5 +164,5 @@ def display_score(report: ScoreReport) -> None:
     print("-" * 70)
     print(f"Criteria met: {report.met} of {report.total}")
     print(f"Task completion score = {report.met}/{report.total} = {report.fraction:.2f}")
-    print("(only 'met' counts; 'partial' is not a pass — PRD Section 8)")
+    print("(only 'met' counts toward the score; 'partial' is not a pass)")
     print("=" * 70)

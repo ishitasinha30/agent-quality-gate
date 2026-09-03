@@ -213,9 +213,9 @@ the point of a golden set; don't skip it.
 ## Design notes
 
 - **Dimensions don't double-count.** A single failure usually surfaces most sharply in one
-  dimension; the others stay quiet or mark N/A. e.g. an agent that promises an unbacked
-  refund process is a *grounding* miss — reasoning quality and policy compliance both
-  leave it alone.
+  dimension; the others stay quiet or mark N/A. e.g. an agent that states an outcome no
+  tool result supports is a *grounding* miss — reasoning quality and policy compliance
+  leave that same line alone unless it also breaks their specific check.
 - **N/A is a real outcome**, distinct from 0.0. Reasoning quality and policy compliance
   exclude a trajectory from their score entirely when they have nothing to check.
 - Parsing, display and `compare_to_golden.py` run with no API key. Only the

@@ -25,7 +25,7 @@ from config import DomainConfig
 
 MODEL = "claude-opus-5"
 
-# The five criterion ids, in order. Each maps to one failure type from PRD Section 4.
+# The five criterion ids, in order. Each maps to one tool-use failure type.
 CRITERION_IDS = (
     "correct_tools_selected",           # <- "wrong tool"
     "parameters_correct",               # <- "incorrect parameters"

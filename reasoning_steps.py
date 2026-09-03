@@ -2,14 +2,14 @@
 Reasoning Quality dimension — step 1: identify the reasoning steps in a trajectory.
 
 A "reasoning step" is a point where the agent had to WORK SOMETHING OUT rather than read
-it off: an inference, a calculation, or a judgment call (PRD Section 3). Reading a single
+it off: an inference, a calculation, or a judgment call. Reading a single
 value straight from a tool result is not a reasoning step.
 
 No correctness judgement here — that is the next stage. If a trajectory has no reasoning
-steps, this dimension is NOT APPLICABLE to it (PRD Sections 3, 6) and it is excluded from
+steps, this dimension is NOT APPLICABLE to it and it is excluded from
 the reasoning-quality score rather than forced to 1.00 / 0.00.
 
-DESIGN DECISION (PRD Section 5 vs Section 6, resolved): option (a). A judgment/inference
+DESIGN DECISION: a judgment/inference
 step whose PREMISE is ungrounded (the agent asserted something with no tool result or
 config rule behind it) is identified here for transparency but is NOT scored by reasoning
 quality — it is a grounding failure. Reasoning quality only scores how the agent operated

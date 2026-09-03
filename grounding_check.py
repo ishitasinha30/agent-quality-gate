@@ -1,7 +1,7 @@
 """
 Grounding dimension — step 2: check each extracted claim against the trajectory's tool results.
 
-Internal consistency only (PRD Sections 1, 3): for each claim, does a specific tool result
+Internal consistency only: for each claim, does a specific tool result
 earlier in THIS trajectory support it? Not: is it true in the real world.
 
 Label per claim:

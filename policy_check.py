@@ -8,8 +8,8 @@ results (that is grounding's job). A claim can be fully grounded and still break
 GENERAL RULE (locked decision): policy compliance fires ONLY when a specific named
 [[policy_rules]] entry is actually violated. It is never a generic "nothing confirms this
 statement" check — an unsupported claim with no specific rule against it is grounding's
-job, not this dimension's. If in doubt, mark not_applicable. (Same call already made for
-reasoning quality on cancel_after_dispatch_good's unbacked refund promise.)
+job, not this dimension's. If in doubt, mark not_applicable. (Reasoning quality applies
+the same principle: it does not score a step whose premise is itself unsupported.)
 
 Most trajectories touch no policy rule -> the dimension is NOT APPLICABLE for them and they
 are excluded from the score (same handling as reasoning quality with no calculation).

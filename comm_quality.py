@@ -2,10 +2,10 @@
 Communication Quality dimension — scoring.
 
 Rates how well the agent's FINAL message is written, independent of whether the action was
-correct and independent of whether any fact is missing (PRD Sections 1-2).
+correct and independent of whether any fact is missing.
 
 Unlike the other dimensions there is NO per-trajectory checklist generation: the same five
-fixed criteria apply to every message (PRD Section 3).
+fixed criteria apply to every message.
 
   1. plain_language           — no jargon / abbreviations / internal shorthand
   2. complete_coherent_response — full sentences, not fragments; also not bloated/repetitive
