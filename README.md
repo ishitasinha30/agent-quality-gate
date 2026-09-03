@@ -1,33 +1,71 @@
 # Agent Quality Gate
 
-Offline evaluation for AI agent transcripts. Given a recorded run of an agent handling
-one user request, it scores that run on six independent quality dimensions and produces a
-per-criterion, auditable breakdown — not a single opaque number.
+You built an AI agent — a support bot, an assistant, something that takes a request and
+acts on it with tools. You want to know whether a given run was actually *good*, in a way
+you can inspect and defend — not just "the judge model said 7/10".
 
-**Domain-generic.** Nothing about any particular product lives in the evaluator code. The
-system under evaluation — its tools, the lifecycle of whatever it acts on, its rules — is
-described in one `.toml` config. Swap the config and the same six dimensions evaluate a
-different product. `config/quick_commerce.toml` is a worked example; `config/TEMPLATE.toml`
-is the annotated skeleton for your own.
+This is that check. You give it a recorded run (a transcript). It scores that run on six
+independent quality dimensions and shows you, criterion by criterion, what passed and what
+failed and why. It runs after the fact on recorded transcripts; it does not sit in your
+agent's live path, and by itself it does not block anything — it produces the numbers you
+would put a release gate behind.
+
+**Domain-generic.** No product-specific knowledge lives in the evaluator code. The system
+under evaluation — its tools, the states its records move through, its rules — is described
+in one `.toml` config. Point it at a different config and the same six dimensions evaluate
+a different product. `config/quick_commerce.toml` is a filled-in example;
+`config/TEMPLATE.toml` is the annotated blank.
 
 ## The six dimensions
 
-| Dimension | Question it answers | Module(s) |
-|---|---|---|
-| **Task completion** | Did the user get the outcome they asked for? | `checklist.py` → `score.py` |
-| **Tool-use correctness** | Right tools, right parameters, results read correctly, no needless or missing calls? | `tooluse_checklist.py` → `tooluse_score.py` |
-| **Grounding** | Does every claim in the final message trace to a tool result in this transcript? | `grounding_claims.py` → `grounding_check.py` |
-| **Reasoning quality** | Was the agent's own inference / arithmetic / judgment sound? (N/A if it did none) | `reasoning_steps.py` → `reasoning_score.py` |
-| **Communication quality** | Is the final message well written — plain, complete, consistent? | `comm_quality.py` |
-| **Policy compliance** | Do the agent's decisions stay within named business rules in the config? (N/A if no rule is triggered) | `policy_check.py` |
+| Dimension | Question it answers |
+|---|---|
+| **Task completion** | Did the user get the outcome they asked for? |
+| **Tool-use correctness** | Right tools, right parameters, results read correctly, no needless or missing calls? |
+| **Grounding** | Is every factual claim in the agent's final message backed by a tool result in this transcript? |
+| **Reasoning quality** | Was the agent's own inference / arithmetic / judgment correct? (N/A if it did none) |
+| **Communication quality** | Is the final message well written — plain, complete, consistent? |
+| **Policy compliance** | Do the agent's decisions stay within the named rules in the config? (N/A if no rule is triggered) |
 
-Each dimension is a two-step pipeline (extract/plan, then score) with the LLM call isolated
-in one function. Every step saves its output to disk so scoring always runs against a
-fixed, inspectable artifact rather than a fresh generation.
+Each dimension runs in two steps: first it works out what "done" *means* for this specific
+request (a checklist, or a list of claims / reasoning steps) and saves that to disk; then
+it scores the transcript against that saved artifact. Splitting it keeps the standard
+fixed while the transcript is judged, and makes every run reproducible and inspectable.
+
+## What a run looks like
+
+```
+$ python run_tooluse.py trajectories/example_missing_item.txt --score
+
+======================================================================
+TOOL-USE CORRECTNESS SCORING
+======================================================================
+1. ✓ met      [correct_tools_selected]
+   reason: Called get_order to retrieve the order and issue_refund to remedy it; no
+           unrelated write tools.
+2. ✓ met      [parameters_correct]
+   reason: issue_refund used item="eggs", amount=60 — the eggs' price from the get_order
+           result, not the order total.
+3. ✓ met      [tool_results_interpreted_correctly]
+   reason: The agent read the returned item list correctly and identified eggs (60) as
+           the undelivered item.
+4. ✓ met      [no_unnecessary_tool_calls]
+   reason: Only get_order and issue_refund were called, and both results were used.
+5. ✗ not met  [required_verification_call_made]
+   reason: get_delivery_status was available but never called before the refund.
+----------------------------------------------------------------------
+Criteria met: 4 of 5
+Tool-use correctness score = 4/5 = 0.80
+======================================================================
+```
+
+Every dimension produces this shape — a verdict and a one-line reason per criterion, then
+a fraction. The same breakdown is written to a JSON file so you can diff it later.
 
 ## Transcript format
 
-A trajectory is a plain-text file, one tagged line per turn:
+A trajectory is a plain-text file, one tagged line per turn. The last `AGENT:` line is the
+"final message" that grounding and communication quality inspect.
 
 ```
 USER: <what the user said>
@@ -38,70 +76,90 @@ RESULT: <what the tool returned>
 
 Untagged lines continue the previous turn. See `trajectories/` for examples.
 
-## Running it
+## Quick start
 
 ```bash
-pip install -r requirements.txt            # Python 3.11+; only needed for the LLM steps
-export ANTHROPIC_API_KEY=sk-ant-...         # only the extract/score steps call the model
-export AQG_CONFIG=config/your_domain.toml   # optional; defaults to config/quick_commerce.toml
+pip install -r requirements.txt          # Python 3.11+
+export ANTHROPIC_API_KEY=sk-ant-...       # get one at https://console.anthropic.com/settings/keys
 ```
 
-One command per dimension. `<transcript>` is any file in `trajectories/`:
-
-```bash
-python run.py           <transcript>.txt --score   # task completion
-python run_tooluse.py   <transcript>.txt --score   # tool-use correctness
-python run_grounding.py <transcript>.txt --check   # grounding
-python run_reasoning.py <transcript>.txt           # reasoning quality (step 1: identify)
-python run_comm.py      <transcript>.txt           # communication quality
-python run_policy.py    <transcript>.txt           # policy compliance
-```
-
-Each `run_*.py` takes an optional trailing config path that overrides `$AQG_CONFIG`.
-Artifacts land in `checklists/` + `scores/`, `tooluse_checklists/` + `tooluse_scores/`,
-`grounding_claims/` + `grounding_scores/`, `reasoning_steps/` + `reasoning_scores/`,
-`comm_scores/`, `policy_scores/`.
-
-The repo ships with a runnable **quick-commerce** example (`config/quick_commerce.toml` +
-`trajectories/*.txt`). With just a key set, this works out of the box:
+The repo ships with a runnable **quick-commerce** example — this works with nothing else
+set up:
 
 ```bash
 python run.py trajectories/example_missing_item.txt --score
 ```
 
-## Measuring accuracy
+## Running it on your own transcripts
 
-`golden_dataset.json` holds hand-verified verdicts per trajectory + dimension, decided
-independently of the evaluator. It is **not** written by the evaluator.
+Point the evaluators at your config (once per shell):
 
 ```bash
-python init_golden.py            # scaffold a pending skeleton entry for every trajectory
-#   -> then fill in score + status + reason for each dimension row (by hand, or see below)
-python compare_to_golden.py      # diff every saved score against golden
-python compare_to_golden.py --live   # regenerate evaluator output first (needs a key)
+export AQG_CONFIG=config/your_domain.toml   # defaults to config/quick_commerce.toml
 ```
 
-`init_golden.py` only adds what's missing — it never touches an entry you've already
-filled in, and is safe to re-run after adding trajectories. To fill the entries with an
-AI first pass instead of from scratch, see **Bootstrapping with an AI** below.
+Then one command per dimension. `<transcript>` is any file in `trajectories/`:
+
+```bash
+python run.py           <transcript>.txt --score   # task completion
+python run_tooluse.py   <transcript>.txt --score   # tool-use correctness
+python run_grounding.py <transcript>.txt --check   # grounding
+python run_reasoning.py <transcript>.txt --score   # reasoning quality
+python run_comm.py      <transcript>.txt           # communication quality
+python run_policy.py    <transcript>.txt           # policy compliance
+```
+
+The trailing verb (`--score` / `--check`) means "also run step 2 and score", not just the
+identify step. `run_comm.py` and `run_policy.py` are single-step, so they take no verb.
+Any `run_*.py` also accepts a config path as its last argument, overriding `$AQG_CONFIG`.
+
+Each step writes a JSON file to a folder named for the dimension (`scores/`,
+`tooluse_scores/`, `grounding_scores/`, `reasoning_scores/`, `comm_scores/`,
+`policy_scores/`), plus the step-1 artifact (`checklists/`, `grounding_claims/`, etc.).
+
+## Measuring accuracy
+
+An LLM-based evaluator is only useful if it agrees with a human. To measure that on your
+domain: write down the scores *you* think are right, then check how often the evaluator
+matches.
+
+`golden_dataset.json` holds those hand-verified verdicts, one per trajectory + dimension.
+It is **not** written by the evaluator. Each verdict has a `status`:
+
+| status | meaning | counted by `compare_to_golden.py`? |
+|---|---|---|
+| `pending` | not reviewed yet (a bare skeleton, or an AI first pass awaiting your check) | no — skipped |
+| `verified` | a human decided this score | yes |
+| `not_applicable` | this dimension has nothing to judge for this trajectory (`score: null`) | yes — expects the evaluator to also say N/A |
+
+```bash
+python init_golden.py           # add a pending skeleton (all 6 dimensions) for every trajectory
+python compare_to_golden.py      # compare the score files you've already generated to golden
+python compare_to_golden.py --live   # re-run the evaluators fresh first (needs a key), then compare
+```
+
+`init_golden.py` only adds what's missing — it never overwrites an entry you've filled in.
+To draft the verdicts with an AI first pass instead of writing them from scratch, see
+**Bootstrapping with an AI** below.
 
 ## Writing a config for a new domain
 
 1. Copy `config/TEMPLATE.toml`.
 2. Fill in `name`, `description`, the `states` list (or `[]`), the `[[tools]]` blocks
-   (each with `effect = "read"` or `"write"`), and any `[[constraints]]`.
-3. Add `[[policy_rules]]` blocks only for real, specific rules the business enforces on
-   the agent's decisions — policy compliance fires only on a named rule, never as a
-   generic "nothing confirms this" check.
-4. Point the tools at it: `export AQG_CONFIG=config/your_domain.toml`.
+   (each `effect = "read"` or `"write"`), and any `[[constraints]]`.
+3. Add `[[policy_rules]]` blocks only for real, specific rules the business enforces on the
+   agent's *decisions*. Policy compliance fires only when a named rule like this is
+   violated — never as a generic "the agent said something unverified" check (that is
+   grounding's job).
+4. `export AQG_CONFIG=config/your_domain.toml`.
 
 No evaluator code changes.
 
 ## Bootstrapping with an AI
 
-Writing the config and the golden verdicts by hand is tedious. In practice you hand an
-LLM (Claude, or any capable model) a description of your system and your transcripts and
-have it draft both — then you review. Two prompts:
+Writing the config and the golden verdicts by hand is tedious. In practice you hand an LLM
+(Claude, or any capable model) a description of your system and your transcripts and have
+it draft both — then you review. Two prompts:
 
 ### Prompt 1 — generate `config/<domain>.toml`
 
@@ -156,7 +214,7 @@ then `export AQG_CONFIG=config/<domain>.toml`.
 Run `python init_golden.py` first for the skeleton, then for each trajectory:
 
 ```
-You are drafting "golden" verdicts for the Agent Quality Gate evaluator - a reference a
+You are drafting "golden" verdicts for the Agent Quality Gate evaluator - a first pass a
 human will review, NOT the final answer. For the ONE trajectory below, score each of the
 six dimensions. Judge only what the transcript and config show; be strict and cite the
 exact turn or tool result behind each verdict.
@@ -168,7 +226,7 @@ DIMENSIONS (score 0.0-1.0 unless marked N/A)
 - tool_use_correctness: right tools chosen; parameters correct (checked against tool
   results); results read correctly; no needless calls; any available verification call
   made before acting. Score = criteria met / 5.
-- grounding: does every factual claim in the agent's FINAL message trace to a tool result
+- grounding: is every factual claim in the agent's FINAL message backed by a tool result
   in THIS transcript? Label each claim grounded / contradicted / ungrounded; score =
   grounded / total claims. Apologies, questions and pleasantries are not claims.
 - reasoning_quality: was the agent's own inference / arithmetic / judgment correct? Score
@@ -184,16 +242,18 @@ DIMENSIONS (score 0.0-1.0 unless marked N/A)
   status = "not_applicable", score = null. Never flag something just because nothing
   confirms it - that is grounding's job.
 
-OUTPUT - exactly this shape, status "draft" for every dimension you actually scored:
+OUTPUT - exactly this shape. Use status "pending" for every dimension you scored (a human
+still has to verify it); use "not_applicable" with score null where the dimension does not
+apply.
 {
   "id": "<trajectory filename without .txt>",
   "intent": "<one phrase>",
   "dimensions": {
-    "task_completion":       {"score": 0.0, "status": "draft", "reason": "..."},
-    "tool_use_correctness":  {"score": 0.0, "status": "draft", "reason": "..."},
-    "grounding":             {"score": 0.0, "status": "draft", "reason": "..."},
+    "task_completion":       {"score": 0.0, "status": "pending", "reason": "..."},
+    "tool_use_correctness":  {"score": 0.0, "status": "pending", "reason": "..."},
+    "grounding":             {"score": 0.0, "status": "pending", "reason": "..."},
     "reasoning_quality":     {"score": null, "status": "not_applicable", "reason": "..."},
-    "communication_quality": {"score": 0.0, "status": "draft", "reason": "..."},
+    "communication_quality": {"score": 0.0, "status": "pending", "reason": "..."},
     "policy_compliance":     {"score": null, "status": "not_applicable", "reason": "..."}
   }
 }
@@ -205,10 +265,10 @@ TRANSCRIPT
 <<< paste one trajectories/<name>.txt >>>
 ```
 
-Merge each object into `golden_dataset.json`. **`compare_to_golden.py` ignores any row
-whose `status` is not `verified` (or `not_applicable`)** — so drafts sit inert until you
-read one, agree or fix the score, and change `status` to `verified`. That review step is
-the point of a golden set; don't skip it.
+Merge each object into `golden_dataset.json`. The AI-drafted rows stay `pending`, so
+`compare_to_golden.py` ignores them until you read one, agree with the score (or fix it),
+and change its `status` to `verified`. That review step is the point of a golden set —
+don't skip it.
 
 ## Design notes
 
@@ -217,6 +277,7 @@ the point of a golden set; don't skip it.
   tool result supports is a *grounding* miss — reasoning quality and policy compliance
   leave that same line alone unless it also breaks their specific check.
 - **N/A is a real outcome**, distinct from 0.0. Reasoning quality and policy compliance
-  exclude a trajectory from their score entirely when they have nothing to check.
-- Parsing, display and `compare_to_golden.py` run with no API key. Only the
-  extract/score steps call the model (`claude-opus-5`, adaptive thinking).
+  drop a trajectory from their score entirely when they have nothing to check.
+- Parsing, display and `compare_to_golden.py` (without `--live`) run with no API key. Only
+  the identify/score steps call a model. The model is set per module as `MODEL = ...`
+  (currently an Anthropic model; swap it for whatever the `anthropic` SDK points at).

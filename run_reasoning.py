@@ -1,15 +1,13 @@
 """
 Reasoning Quality dimension — CLI.
 
-Reuses the existing config and trajectories. Does not touch task-completion, tool-use, or
-grounding code. Right now it does reasoning-step identification only; scoring is the next
-slice.
-
 usage:
-    python run_reasoning.py <trajectory-file.txt>
+    python run_reasoning.py <trajectory-file.txt>            # step 1: identify reasoning steps
+    python run_reasoning.py <trajectory-file.txt> --score    # + step 2: check each step
 
-Identifies the reasoning steps (inferences, calculations, judgment calls) and saves them
-to reasoning_steps/<name>.json. An empty result means the dimension is not applicable to
+Step 1 identifies the reasoning steps (inferences, calculations, judgment calls) and saves
+them to reasoning_steps/<name>.json. --score then checks each scorable step and writes
+reasoning_scores/<name>.json. An empty step list means the dimension is not applicable to
 that trajectory. Needs an Anthropic API key.
 """
 
@@ -30,6 +28,8 @@ from trajectory import parse_trajectory
 
 def main(argv: list[str]) -> int:
     args = argv[1:]
+    want_score = "--score" in args
+    args = [a for a in args if a != "--score"]
     if len(args) != 1:
         print(__doc__)
         return 1
@@ -64,6 +64,27 @@ def main(argv: list[str]) -> int:
 
     print()
     display_reasoning_steps(steps)
+
+    if want_score:
+        from reasoning_score import (
+            display_reasoning_score,
+            reasoning_score_path_for,
+            save_reasoning_score,
+            score_reasoning,
+        )
+
+        print("\nChecking each reasoning step against the SAVED steps (asking Claude)...")
+        try:
+            report = score_reasoning(steps, traj)
+        except Exception as e:  # noqa: BLE001
+            print(f"\nCould not score: {e}")
+            return 1
+        print()
+        display_reasoning_score(report)
+        sc_path = reasoning_score_path_for(traj_path)
+        save_reasoning_score(report, sc_path, steps_file=steps_path, trajectory_file=traj_path)
+        print(f"\nSaved score to {sc_path}")
+
     return 0
 
 
