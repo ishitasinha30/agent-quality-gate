@@ -5,10 +5,11 @@ acts on it with tools. You want to know whether a given run was actually *good*,
 you can inspect and defend — not just "the judge model said 7/10".
 
 This is that check. You give it a recorded run (a transcript). It scores that run on six
-independent quality dimensions and shows you, criterion by criterion, what passed and what
-failed and why. It runs after the fact on recorded transcripts; it does not sit in your
-agent's live path, and by itself it does not block anything — it produces the numbers you
-would put a release gate behind.
+independent quality dimensions, shows you criterion by criterion what passed and what
+failed and why, and (via the decision engine) folds the six into one verdict —
+`PASS` / `RETRY` / `REPAIR` / `HUMAN_REVIEW`. It runs after the fact on recorded
+transcripts; it does not sit in your agent's live path, and by itself it does not block
+anything — it produces the numbers and the verdict you would put a release gate behind.
 
 **Domain-generic.** No product-specific knowledge lives in the evaluator code. The system
 under evaluation — its tools, the states its records move through, its rules — is described
@@ -116,6 +117,51 @@ Any `run_*.py` also accepts a config path as its last argument, overriding `$AQG
 Each step writes a JSON file to a folder named for the dimension (`scores/`,
 `tooluse_scores/`, `grounding_scores/`, `reasoning_scores/`, `comm_scores/`,
 `policy_scores/`), plus the step-1 artifact (`checklists/`, `grounding_claims/`, etc.).
+
+## Combining the six: the decision engine
+
+Once a trajectory has all six scores on disk, `decision_engine.py` folds them into one
+verdict. It only reads the saved score files — it never calls a model.
+
+```bash
+python decision_engine.py <transcript>.txt
+```
+
+**1. Weighted average.** Fixed weights: task completion 25, reasoning quality 25, tool-use
+15, grounding 15, policy compliance 15, communication quality 5. A dimension that is
+legitimately not-applicable (reasoning quality with no calculation, policy compliance with
+no rule triggered) is dropped and the remaining weights are renormalized — it is not
+scored zero.
+
+**2. Critical overrides.** Regardless of the average, a trajectory is blocked from PASS if
+any of these hold: a policy-compliance violation (0.00 on an applicable rule), a
+*contradicted* grounding claim (an outright false statement — merely ungrounded does not
+count), or task completion 0.00.
+
+**3. Label.**
+
+| Condition | Label |
+|---|---|
+| a required dimension has no score yet (task / tool-use / grounding / communication — these never legitimately N/A) | `INCOMPLETE` |
+| no override, average ≥ 0.85 | `PASS` |
+| no override, 0.50 ≤ average < 0.85 | `RETRY` |
+| no override, average < 0.50 | `HUMAN_REVIEW` |
+| override fired, average ≥ 0.60 | `REPAIR` |
+| override fired, average < 0.60 | `HUMAN_REVIEW` |
+
+When an override fired and the average is between 0.55 and 0.70, the `REPAIR` / `HUMAN_REVIEW`
+call is close — the output flags it for a human. The `0.60` / `0.50` cut-offs are the
+current defaults, meant to be tuned against your own trajectories.
+
+```
+$ python decision_engine.py trajectories/wrong_item_delivered.txt
+
+weighted average : 54.50 / 75 = 0.727
+CRITICAL OVERRIDES
+  TRIGGERED  [policy_violation]  policy compliance 0.00 — violated: wrong_item_disposition
+DECISION: REPAIR
+  override(s) policy_violation fired but weighted average 0.727 is above 0.60 — largely salvageable
+```
 
 ## Measuring accuracy
 
