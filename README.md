@@ -63,6 +63,10 @@ Tool-use correctness score = 4/5 = 0.80
 Every dimension produces this shape — a verdict and a one-line reason per criterion, then
 a fraction. The same breakdown is written to a JSON file so you can diff it later.
 
+(This is the bundled quick-commerce example; `get_order`, `eggs`, `amount=60` etc. come
+from that config and transcript, not from the tool. The five criterion IDs shown *are*
+fixed for tool-use correctness — the other dimensions build their criteria per trajectory.)
+
 ## Transcript format
 
 A trajectory is a plain-text file, one tagged line per turn. The last `AGENT:` line is the
@@ -152,6 +156,9 @@ count), or task completion 0.00.
 When an override fired and the average is between 0.55 and 0.70, the `REPAIR` / `HUMAN_REVIEW`
 call is close — the output flags it for a human. The `0.60` / `0.50` cut-offs are the
 current defaults, meant to be tuned against your own trajectories.
+
+Worked example, again from the bundled quick-commerce demo (`wrong_item_disposition` is a
+policy rule from *its* config):
 
 ```
 $ python decision_engine.py trajectories/wrong_item_delivered.txt
