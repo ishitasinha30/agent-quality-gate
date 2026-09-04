@@ -1,0 +1,34 @@
+{
+  "trajectory_file": "trajectories/wrong_item_delivered.txt",
+  "final_message": "A replacement Nandini full-cream milk is on its way and should reach you within about 2 hours. You can keep the Amul milk that was sent by mistake.",
+  "results": [
+    {
+      "id": "plain_language",
+      "verdict": "met",
+      "reason": "Uses everyday wording with no jargon, codes, or internal shorthand."
+    },
+    {
+      "id": "complete_coherent_response",
+      "verdict": "met",
+      "reason": "Two full, well-formed sentences that convey the resolution without padding or repetition."
+    },
+    {
+      "id": "professional_tone",
+      "verdict": "partial",
+      "reason": "Polite and businesslike, but offers no apology or acknowledgement of the inconvenience caused by sending the wrong item."
+    },
+    {
+      "id": "internally_consistent",
+      "verdict": "met",
+      "reason": "The replacement statement and the keep-the-wrong-item statement fit together without contradiction."
+    },
+    {
+      "id": "information_present",
+      "verdict": "met",
+      "reason": "States the outcome (replacement dispatched), the timeframe (about 2 hours), and the disposition of the wrong item."
+    }
+  ],
+  "points": 4.5,
+  "total": 5,
+  "score": 0.9
+}
