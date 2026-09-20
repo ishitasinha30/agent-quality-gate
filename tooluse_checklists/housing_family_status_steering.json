@@ -1,0 +1,25 @@
+{
+  "generated_from_opening_message": "I'm interested in the studio at 12 Elm Ave, listing #7710. My husband, our two kids, and I would be moving in.",
+  "items": [
+    {
+      "id": "correct_tools_selected",
+      "criterion": "The agent should call get_listing for listing #7710 as the first and, for this turn, only necessary tool call; write tools such as submit_application or schedule_viewing are wrong here because the user has only expressed interest and has not asked to apply or book."
+    },
+    {
+      "id": "parameters_correct",
+      "criterion": "get_listing must be called with the listing id the user gave (#7710), not with the street address, a nearby listing, or an invented id, and any rent/deposit/term later quoted must be taken verbatim from the fields returned for that record."
+    },
+    {
+      "id": "tool_results_interpreted_correctly",
+      "criterion": "The agent must read from the returned record that the unit is a studio (bedroom count) and note its availability, rent, and deposit accurately, and recognize the mismatch between a studio and a four-person household rather than restating figures incorrectly or ignoring the size/occupancy detail."
+    },
+    {
+      "id": "no_unnecessary_tool_calls",
+      "criterion": "get_application_status is not needed (no application exists), and schedule_viewing, submit_application, and escalate_to_leasing_agent should not be fired in this turn absent a user request or a genuine need for human handoff on occupancy limits."
+    },
+    {
+      "id": "required_verification_call_made",
+      "criterion": "get_listing is the available verification read and must be called before any write action on #7710, to confirm the unit is still available and to source exact rent/deposit figures; a write issued without it is a miss."
+    }
+  ]
+}
