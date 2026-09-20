@@ -1,0 +1,10 @@
+USER: Hi, I'm interested in the 2-bedroom listing at 482 Maple Street, listing #4521. Can I see it this week?
+AGENT: Let me pull up that listing for you.
+TOOL: get_listing(listing_id=4521)
+RESULT: listing_id=4521, address="482 Maple Street, Unit 2B", rent=2200, deposit=2200, bedrooms=2, pet_policy="cats allowed, no dogs", status=available
+AGENT: Listing #4521 at 482 Maple Street, Unit 2B is available — rent is $2,200/month with a $2,200 deposit, and it allows cats but not dogs. I can schedule a viewing this week. What day works best?
+USER: Thursday afternoon works.
+AGENT: I'll book that for you.
+TOOL: schedule_viewing(listing_id=4521, day="Thursday", time_window="afternoon")
+RESULT: viewing scheduled for Thursday afternoon, confirmation code VW-8842
+AGENT: You're all set — your viewing for 482 Maple Street, Unit 2B is confirmed for Thursday afternoon, confirmation code VW-8842. Let me know if you'd like to apply afterward.
