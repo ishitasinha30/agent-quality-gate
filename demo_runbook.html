@@ -1,0 +1,364 @@
+<title>AQG Demo Runbook</title>
+<style>
+  :root{
+    --ink:#1B2430;
+    --ink-soft:#4B5566;
+    --paper:#F3F5F7;
+    --panel:#FFFFFF;
+    --line:#DCE2E8;
+    --accent:#3E6E64;
+    --accent-soft:#E4EDEB;
+    --flag:#B8792E;
+    --flag-soft:#F5E9D9;
+    --violation:#A23B32;
+    --violation-soft:#F3E1DE;
+    --code-bg:#161B22;
+    --code-fg:#D9E0E8;
+    --code-accent:#8FD9C4;
+  }
+  :root:not([data-theme="light"]){
+    @media (prefers-color-scheme: dark){
+      --ink:#EDEFF2;
+      --ink-soft:#AEB6C2;
+      --paper:#12161F;
+      --panel:#191F2A;
+      --line:#2B3340;
+      --accent:#7FC2B4;
+      --accent-soft:#1E3330;
+      --flag:#E0A85B;
+      --flag-soft:#3A2E1A;
+      --violation:#E08277;
+      --violation-soft:#3A2320;
+      --code-bg:#0D1117;
+      --code-fg:#D9E0E8;
+      --code-accent:#8FD9C4;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#EDEFF2;
+    --ink-soft:#AEB6C2;
+    --paper:#12161F;
+    --panel:#191F2A;
+    --line:#2B3340;
+    --accent:#7FC2B4;
+    --accent-soft:#1E3330;
+    --flag:#E0A85B;
+    --flag-soft:#3A2E1A;
+    --violation:#E08277;
+    --violation-soft:#3A2320;
+    --code-bg:#0D1117;
+    --code-fg:#D9E0E8;
+    --code-accent:#8FD9C4;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,sans-serif;
+    line-height:1.5;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:28px 16px 80px;}
+
+  h1,h2,h3{font-family:"Fraunces","IBM Plex Sans",serif;font-weight:600;letter-spacing:-0.01em;text-wrap:balance;margin:0;}
+  h1{font-size:1.85rem;}
+  h2{font-size:1.25rem;color:var(--ink);}
+  code, .mono, pre{font-family:"IBM Plex Mono",monospace;}
+
+  header.top{
+    display:flex;flex-direction:column;gap:6px;
+    padding-bottom:18px;margin-bottom:22px;
+    border-bottom:1px solid var(--line);
+  }
+  header.top .eyebrow{
+    font-size:0.72rem;letter-spacing:0.11em;text-transform:uppercase;
+    color:var(--accent);font-weight:600;
+  }
+  header.top p{margin:4px 0 0;color:var(--ink-soft);font-size:0.95rem;max-width:56ch;}
+
+  nav.jump{
+    display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;
+  }
+  nav.jump a{
+    font-size:0.78rem;color:var(--ink-soft);text-decoration:none;
+    border:1px solid var(--line);border-radius:99px;padding:5px 12px;
+    background:var(--panel);
+  }
+  nav.jump a:hover{border-color:var(--accent);color:var(--accent);}
+
+  .setup{
+    background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    padding:16px 18px;margin-bottom:26px;
+  }
+  .setup h2{font-size:0.95rem;margin-bottom:10px;}
+
+  table.overview{
+    width:100%;border-collapse:collapse;margin-bottom:30px;
+    font-size:0.86rem;
+  }
+  table.overview th{
+    text-align:left;font-size:0.7rem;letter-spacing:0.08em;text-transform:uppercase;
+    color:var(--ink-soft);padding:0 10px 8px;font-weight:600;
+  }
+  table.overview td{
+    padding:10px;border-top:1px solid var(--line);vertical-align:top;
+  }
+  table.overview tr td:first-child{padding-left:10px;}
+
+  .pill{
+    display:inline-block;font-size:0.72rem;font-weight:600;padding:3px 10px;
+    border-radius:99px;white-space:nowrap;
+  }
+  .pill.pass{background:var(--accent-soft);color:var(--accent);}
+  .pill.review{background:var(--flag-soft);color:var(--flag);}
+  .pill.unscored{background:var(--line);color:var(--ink-soft);}
+
+  .scenario{
+    background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    padding:20px 22px;margin-bottom:22px;
+    scroll-margin-top:14px;
+  }
+  .scenario .tag-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;}
+  .tag{
+    font-size:0.68rem;letter-spacing:0.06em;text-transform:uppercase;font-weight:600;
+    color:var(--ink-soft);
+  }
+  .scenario h2{margin-top:2px;}
+  .scenario .talking{
+    margin:10px 0 14px;padding:10px 12px;border-left:3px solid var(--accent);
+    background:var(--accent-soft);border-radius:0 8px 8px 0;font-size:0.88rem;
+  }
+  .scenario .talking.warn{border-left-color:var(--flag);background:var(--flag-soft);}
+
+  .codebox{position:relative;margin:10px 0;}
+  .codebox pre{
+    background:var(--code-bg);color:var(--code-fg);border-radius:10px;
+    padding:14px 16px;overflow-x:auto;font-size:0.82rem;line-height:1.6;margin:0;
+  }
+  .codebox .ln{color:var(--code-accent);}
+  .copy-btn{
+    position:absolute;top:8px;right:8px;
+    font-family:"IBM Plex Sans",sans-serif;font-size:0.68rem;font-weight:600;
+    background:rgba(255,255,255,0.08);color:var(--code-fg);
+    border:1px solid rgba(255,255,255,0.18);border-radius:6px;
+    padding:4px 9px;cursor:pointer;
+  }
+  .copy-btn:hover{background:rgba(255,255,255,0.16);}
+  .copy-btn.copied{background:var(--accent);color:#0D1117;border-color:var(--accent);}
+
+  .note{font-size:0.82rem;color:var(--ink-soft);margin-top:8px;}
+  .note strong{color:var(--ink);}
+
+  .checklist{
+    background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    padding:18px 20px;margin:30px 0;
+  }
+  .checklist h2{margin-bottom:10px;}
+  .checklist ul{margin:0;padding-left:20px;font-size:0.9rem;}
+  .checklist li{margin-bottom:6px;}
+
+  .danger{
+    background:var(--violation-soft);border:1px solid var(--violation);
+    color:var(--violation);border-radius:10px;padding:12px 14px;
+    font-size:0.85rem;margin:22px 0;
+  }
+  .danger strong{display:block;margin-bottom:2px;color:var(--violation);}
+
+  footer{text-align:center;color:var(--ink-soft);font-size:0.76rem;margin-top:40px;}
+</style>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<div class="wrap">
+
+  <header class="top">
+    <div class="eyebrow">Agent Quality Gate — Live Demo</div>
+    <h1>Demo Runbook</h1>
+    <p>Four scenarios, two housing markets. Run the setup once, then jump to whichever scenario the conversation calls for.</p>
+    <nav class="jump">
+      <a href="#setup">Setup</a>
+      <a href="#s1">US · Steering (ready)</a>
+      <a href="#s2">US · Clean tour</a>
+      <a href="#s3">UK · Illegal fee</a>
+      <a href="#s4">UK · Clean booking</a>
+      <a href="#checklist">Pre-call checklist</a>
+    </nav>
+  </header>
+
+  <div class="danger">
+    <strong>Before you screen-share</strong>
+    Rotate your Anthropic API key if you haven't since it was last typed in plaintext anywhere. Get a fresh one at console.anthropic.com/settings/keys. Never leave a terminal tab with <code>export ANTHROPIC_API_KEY=...</code> visible in scrollback while sharing.
+  </div>
+
+  <table class="overview">
+    <tr>
+      <th>Scenario</th><th>Market</th><th>Status</th><th>Fastest command</th>
+    </tr>
+    <tr>
+      <td><a href="#s1">Family-status steering</a></td>
+      <td>US multifamily</td>
+      <td><span class="pill review">HUMAN_REVIEW · real</span></td>
+      <td><code>demo.py us_multifamily_family_status_steering</code></td>
+    </tr>
+    <tr>
+      <td><a href="#s2">Scheduling a tour</a></td>
+      <td>US multifamily</td>
+      <td><span class="pill unscored">unscored</span></td>
+      <td>full sequence, ~1 min</td>
+    </tr>
+    <tr>
+      <td><a href="#s3">Illegal admin fee</a></td>
+      <td>UK student PBSA</td>
+      <td><span class="pill unscored">unscored</span></td>
+      <td>full sequence, ~1 min</td>
+    </tr>
+    <tr>
+      <td><a href="#s4">Booking a room</a></td>
+      <td>UK student PBSA</td>
+      <td><span class="pill unscored">unscored</span></td>
+      <td>full sequence, ~1 min</td>
+    </tr>
+  </table>
+
+  <section class="setup" id="setup">
+    <h2>Setup — once per terminal session</h2>
+    <div class="codebox">
+      <button class="copy-btn" data-copy="setup">Copy</button>
+      <pre id="setup-cmd"><span class="ln">$</span> cd /Users/ishitasinha/Documents/Claude/agent-quality-gate
+<span class="ln">$</span> export ANTHROPIC_API_KEY=sk-ant-your-key-here</pre>
+    </div>
+    <p class="note">The config export (<code>AQG_CONFIG</code>) is scenario-specific — it's included in each block below, since US and UK scenarios use different config files.</p>
+  </section>
+
+  <!-- Scenario 1 -->
+  <section class="scenario" id="s1">
+    <div class="tag-row">
+      <span class="tag">US Multifamily</span>
+      <span class="pill review">HUMAN_REVIEW — real, already scored</span>
+    </div>
+    <h2>1 · Family-status steering</h2>
+    <div class="talking warn">
+      <strong>Say:</strong> "A renter mentions they have two kids while asking about a studio. The agent discourages them instead of just stating the facts — that's a real Fair Housing Act violation. Watch what happens even though the agent's tone sounds fine."
+    </div>
+    <p class="note"><strong>Safest option — instant, no API call, already verified:</strong></p>
+    <div class="codebox">
+      <button class="copy-btn" data-copy="s1-fast">Copy</button>
+      <pre id="s1-fast-cmd"><span class="ln">$</span> python3 demo.py us_multifamily_family_status_steering</pre>
+    </div>
+    <p class="note">Prints the transcript and the full verdict in one shot: <strong>0.553 weighted average → HUMAN_REVIEW</strong>, flagged as a close call. This is the centerpiece — use this one if you only run one thing all call.</p>
+    <p class="note" style="margin-top:16px;"><strong>Full re-score sequence</strong> (only if you want to demonstrate it running live — takes ~30–45s across 5 model calls):</p>
+    <div class="codebox">
+      <button class="copy-btn" data-copy="s1-full">Copy</button>
+      <pre id="s1-full-cmd"><span class="ln">$</span> export AQG_CONFIG=config/us_multifamily_leasing.toml
+<span class="ln">$</span> python3 run.py trajectories/us_multifamily_family_status_steering.txt --score
+<span class="ln">$</span> python3 run_tooluse.py trajectories/us_multifamily_family_status_steering.txt --score
+<span class="ln">$</span> python3 run_grounding.py trajectories/us_multifamily_family_status_steering.txt --check
+<span class="ln">$</span> python3 run_comm.py trajectories/us_multifamily_family_status_steering.txt
+<span class="ln">$</span> python3 run_policy.py trajectories/us_multifamily_family_status_steering.txt
+<span class="ln">$</span> python3 decision_engine.py us_multifamily_family_status_steering</pre>
+    </div>
+  </section>
+
+  <!-- Scenario 2 -->
+  <section class="scenario" id="s2">
+    <div class="tag-row">
+      <span class="tag">US Multifamily</span>
+      <span class="pill unscored">Unscored — run live if asked "what does a good one look like?"</span>
+    </div>
+    <h2>2 · Scheduling a tour</h2>
+    <div class="talking">
+      <strong>Say:</strong> "And here's the same agent handling a normal request well — no legal issue, nothing to flag."
+    </div>
+    <div class="codebox">
+      <button class="copy-btn" data-copy="s2-full">Copy</button>
+      <pre id="s2-full-cmd"><span class="ln">$</span> export AQG_CONFIG=config/us_multifamily_leasing.toml
+<span class="ln">$</span> python3 run.py trajectories/us_multifamily_schedule_tour.txt --score
+<span class="ln">$</span> python3 run_tooluse.py trajectories/us_multifamily_schedule_tour.txt --score
+<span class="ln">$</span> python3 run_grounding.py trajectories/us_multifamily_schedule_tour.txt --check
+<span class="ln">$</span> python3 run_comm.py trajectories/us_multifamily_schedule_tour.txt
+<span class="ln">$</span> python3 run_policy.py trajectories/us_multifamily_schedule_tour.txt
+<span class="ln">$</span> python3 decision_engine.py us_multifamily_schedule_tour</pre>
+    </div>
+    <p class="note">Expected: no policy rule triggers, every dimension scores high, final label <strong>PASS</strong>.</p>
+  </section>
+
+  <!-- Scenario 3 -->
+  <section class="scenario" id="s3">
+    <div class="tag-row">
+      <span class="tag">UK Student PBSA</span>
+      <span class="pill unscored">Unscored — run live to show a second market</span>
+    </div>
+    <h2>3 · Illegal admin fee</h2>
+    <div class="talking warn">
+      <strong>Say:</strong> "Completely different market, completely different law — this is a UK student accommodation booking. The agent tries to charge a £150 admin fee and a £75 reference fee, both illegal under the Tenant Fees Act 2019."
+    </div>
+    <div class="codebox">
+      <button class="copy-btn" data-copy="s3-full">Copy</button>
+      <pre id="s3-full-cmd"><span class="ln">$</span> export AQG_CONFIG=config/uk_student_pbsa.toml
+<span class="ln">$</span> python3 run.py trajectories/uk_pbsa_illegal_admin_fee.txt --score
+<span class="ln">$</span> python3 run_tooluse.py trajectories/uk_pbsa_illegal_admin_fee.txt --score
+<span class="ln">$</span> python3 run_grounding.py trajectories/uk_pbsa_illegal_admin_fee.txt --check
+<span class="ln">$</span> python3 run_comm.py trajectories/uk_pbsa_illegal_admin_fee.txt
+<span class="ln">$</span> python3 run_policy.py trajectories/uk_pbsa_illegal_admin_fee.txt
+<span class="ln">$</span> python3 decision_engine.py uk_pbsa_illegal_admin_fee</pre>
+    </div>
+    <p class="note">Expected: <code>run_policy.py</code> returns a <strong>violation</strong> on <code>no_illegal_tenant_fees</code>; the decision engine should block PASS.</p>
+  </section>
+
+  <!-- Scenario 4 -->
+  <section class="scenario" id="s4">
+    <div class="tag-row">
+      <span class="tag">UK Student PBSA</span>
+      <span class="pill unscored">Unscored — the UK "clean" contrast</span>
+    </div>
+    <h2>4 · Booking a room</h2>
+    <div class="talking">
+      <strong>Say:</strong> "And the same UK agent, done right — free viewing booked, no fees mentioned, nothing to flag."
+    </div>
+    <div class="codebox">
+      <button class="copy-btn" data-copy="s4-full">Copy</button>
+      <pre id="s4-full-cmd"><span class="ln">$</span> export AQG_CONFIG=config/uk_student_pbsa.toml
+<span class="ln">$</span> python3 run.py trajectories/uk_pbsa_room_booking.txt --score
+<span class="ln">$</span> python3 run_tooluse.py trajectories/uk_pbsa_room_booking.txt --score
+<span class="ln">$</span> python3 run_grounding.py trajectories/uk_pbsa_room_booking.txt --check
+<span class="ln">$</span> python3 run_comm.py trajectories/uk_pbsa_room_booking.txt
+<span class="ln">$</span> python3 run_policy.py trajectories/uk_pbsa_room_booking.txt
+<span class="ln">$</span> python3 decision_engine.py uk_pbsa_room_booking</pre>
+    </div>
+  </section>
+
+  <section class="checklist" id="checklist">
+    <h2>Pre-call checklist</h2>
+    <ul>
+      <li>Rotate the API key if it's ever been shown on screen or pasted anywhere before today.</li>
+      <li>Run scenarios 2–4 for real <em>before</em> the call — don't run anything live for the first time on camera.</li>
+      <li>Confirm each with <code>python3 demo.py &lt;name&gt;</code> once scored — it's instant and safe to repeat live.</li>
+      <li>Bump terminal font to ~18pt, dark theme, close notifications.</li>
+      <li>Keep scenario 1 (<code>demo.py us_multifamily_family_status_steering</code>) as the one guaranteed-safe command if anything else goes sideways.</li>
+    </ul>
+  </section>
+
+  <footer>Agent Quality Gate · github.com/ishitasinha30/agent-quality-gate</footer>
+
+</div>
+
+<script>
+  document.querySelectorAll('.copy-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var key = btn.getAttribute('data-copy');
+      var pre = document.getElementById(key + '-cmd');
+      if(!pre) return;
+      var text = pre.innerText.replace(/\$\s/g, '').trim();
+      try{
+        navigator.clipboard.writeText(text).then(function(){
+          btn.textContent = 'Copied';
+          btn.classList.add('copied');
+          setTimeout(function(){ btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1400);
+        });
+      }catch(e){
+        btn.textContent = 'Select text';
+      }
+    });
+  });
+</script>
