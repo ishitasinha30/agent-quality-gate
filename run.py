@@ -16,7 +16,7 @@ usage:
   exists — delete the file or re-run --checklist to make a fresh one.
 Both need an Anthropic API key (see README).
 
-If you leave the config off, it uses $AQG_CONFIG or config/quick_commerce.toml.
+If you leave the config off, it uses $AQG_CONFIG or config/us_multifamily_leasing.toml.
 """
 
 from __future__ import annotations

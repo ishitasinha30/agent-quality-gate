@@ -6,8 +6,9 @@ evaluation — its tools, the state machine of whatever entity it acts on, its b
 constraints and policy rules — lives in a .toml config. Point the evaluators at a
 different config and the same code evaluates a different product.
 
-See config/TEMPLATE.toml for the full schema and config/quick_commerce.toml for a worked
-example. Set the AQG_CONFIG env var to change the default config path.
+See config/TEMPLATE.toml for the full schema and config/us_multifamily_leasing.toml or
+config/uk_student_pbsa.toml for worked examples. Set the AQG_CONFIG env var to change the
+default config path.
 
 TOML is a plain-text config format. Python 3.11+ reads it with the built-in `tomllib`.
 """
@@ -19,7 +20,7 @@ import tomllib
 from dataclasses import dataclass, field
 
 # Default config path. Override with the AQG_CONFIG env var or a positional CLI arg.
-DEFAULT_CONFIG_PATH = os.environ.get("AQG_CONFIG") or "config/quick_commerce.toml"
+DEFAULT_CONFIG_PATH = os.environ.get("AQG_CONFIG") or "config/us_multifamily_leasing.toml"
 
 
 @dataclass

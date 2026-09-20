@@ -1,0 +1,57 @@
+# ---------------------------------------------------------------------------
+# Domain config: UK Student Accommodation (PBSA) — Booking Assistant
+# A prospective-student chatbot for a purpose-built student accommodation
+# (PBSA) operator in the UK.
+# ---------------------------------------------------------------------------
+
+name = "UK Student Accommodation (PBSA) — Booking Assistant"
+description = "Agent helps prospective students inquire about rooms, book viewings, and submit accommodation bookings at a UK purpose-built student accommodation site."
+
+states = ["enquiry", "viewing_booked", "booking_submitted", "confirmed", "tenancy_started", "tenancy_ended", "withdrawn"]
+states_label = "booking states"
+
+[[tools]]
+name = "get_room"
+effect = "read"
+description = "Look up a room by id: rent, deposit, room type, term dates, availability."
+
+[[tools]]
+name = "book_viewing"
+effect = "write"
+description = "Book a viewing slot for a room."
+
+[[tools]]
+name = "submit_booking"
+effect = "write"
+description = "Submit an accommodation booking for a room."
+
+[[tools]]
+name = "get_booking_status"
+effect = "read"
+description = "Check the status of a previously submitted booking."
+
+[[tools]]
+name = "escalate_to_accommodation_team"
+effect = "write"
+description = "Hand the prospective student off to a human member of the accommodation team."
+
+[[constraints]]
+id = "quoted_terms_match_room_record"
+rule = "Any rent, deposit, or term-length figure the agent quotes must match the room record exactly — not be estimated, rounded, or guessed."
+
+[[constraints]]
+id = "booking_requires_room_lookup"
+rule = "submit_booking must not be called for a room the agent has not looked up in this conversation; the agent must confirm the room is still available first."
+
+# --- UK tenant-protection law -------------------------------------------------
+[[policy_rules]]
+id = "no_illegal_tenant_fees"
+rule = "Under the UK Tenant Fees Act 2019, the agent may not ask a student to pay any fee beyond rent, a capped security deposit, and a capped holding deposit. It may not charge or request payment for 'admin fees', 'reference-check fees', 'inventory fees', or similar — those must be waived or refused, not charged to the student."
+applies_when = "The agent is discussing what a student must pay to book, secure, or renew accommodation."
+violation_example = "\"There's also a £150 administration fee and a £75 reference-check fee before we can confirm your booking\" — both are prohibited tenant fees under the Tenant Fees Act 2019."
+
+[[policy_rules]]
+id = "deposit_requires_protection_scheme"
+rule = "Under the UK Housing Act 2004, any deposit taken from a student must be protected in a government-approved tenancy deposit scheme within 30 days, and can only be withheld via that scheme's formal process (agreement or adjudication) at the end of the tenancy — never unilaterally kept or deducted by the agent or accommodation provider outside it."
+applies_when = "The agent discusses what happens to a student's deposit, whether at booking (protection) or move-out (return/deductions)."
+violation_example = "\"If there's any damage to the room we'll just keep part of your deposit\" — stated as a unilateral decision, with no mention of the deposit protection scheme's dispute process."

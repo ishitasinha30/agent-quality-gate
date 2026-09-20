@@ -1,6 +1,6 @@
 {
-  "trajectory_file": "trajectories/housing_family_status_steering.txt",
-  "checklist_file": "checklists/housing_family_status_steering.json",
+  "trajectory_file": "trajectories/us_multifamily_family_status_steering.txt",
+  "checklist_file": "checklists/us_multifamily_family_status_steering.json",
   "results": [
     {
       "id": "listing_identified",

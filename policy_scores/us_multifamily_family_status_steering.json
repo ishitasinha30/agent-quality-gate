@@ -1,6 +1,6 @@
 {
-  "trajectory_file": "trajectories/housing_family_status_steering.txt",
-  "config_file": "config/housing_leasing.toml",
+  "trajectory_file": "trajectories/us_multifamily_family_status_steering.txt",
+  "config_file": "config/us_multifamily_leasing.toml",
   "applicable": true,
   "results": [
     {

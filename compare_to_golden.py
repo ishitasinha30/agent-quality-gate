@@ -24,10 +24,8 @@ import sys
 GOLDEN = "golden_dataset.json"
 TOL = 0.02  # |golden - live| within this is an AGREE (absorbs 0.3333 vs 0.33 rounding)
 
-# golden trajectory_file paths are best-guess; map the ones that differ from the repo.
-PATH_OVERRIDES = {
-    "trajectories/multi_issue.txt": "trajectories/multi_issue_missing_and_damaged.txt",
-}
+# golden trajectory_file paths are best-guess; map any that differ from the repo here.
+PATH_OVERRIDES: dict[str, str] = {}
 
 # dimension -> where its saved score lives
 DIM_DIR = {

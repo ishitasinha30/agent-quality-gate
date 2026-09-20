@@ -1,6 +1,6 @@
 {
-  "trajectory_file": "trajectories/housing_family_status_steering.txt",
-  "claims_file": "grounding_claims/housing_family_status_steering.json",
+  "trajectory_file": "trajectories/us_multifamily_family_status_steering.txt",
+  "claims_file": "grounding_claims/us_multifamily_family_status_steering.json",
   "verdicts": [
     {
       "id": "unit_is_studio",

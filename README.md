@@ -14,8 +14,11 @@ anything — it produces the numbers and the verdict you would put a release gat
 **Domain-generic.** No product-specific knowledge lives in the evaluator code. The system
 under evaluation — its tools, the states its records move through, its rules — is described
 in one `.toml` config. Point it at a different config and the same six dimensions evaluate
-a different product. `config/quick_commerce.toml` is a filled-in example;
-`config/TEMPLATE.toml` is the annotated blank.
+a different product. This repo ships two filled-in examples — `config/us_multifamily_leasing.toml`
+(a US apartment leasing assistant, checked against the Fair Housing Act) and
+`config/uk_student_pbsa.toml` (a UK student-accommodation booking assistant, checked
+against the Tenant Fees Act 2019 and deposit-protection law) — plus `config/TEMPLATE.toml`,
+the annotated blank for any other domain.
 
 ## The six dimensions
 
@@ -36,24 +39,24 @@ fixed while the transcript is judged, and makes every run reproducible and inspe
 ## What a run looks like
 
 ```
-$ python run_tooluse.py trajectories/example_missing_item.txt --score
+$ python run_tooluse.py trajectories/us_multifamily_family_status_steering.txt --score
 
 ======================================================================
 TOOL-USE CORRECTNESS SCORING
 ======================================================================
 1. ✓ met      [correct_tools_selected]
-   reason: Called get_order to retrieve the order and issue_refund to remedy it; no
-           unrelated write tools.
+   reason: The agent made exactly one call, get_listing for #7710, and fired no write
+           tools despite the user only expressing interest.
 2. ✓ met      [parameters_correct]
-   reason: issue_refund used item="eggs", amount=60 — the eggs' price from the get_order
-           result, not the order total.
-3. ✓ met      [tool_results_interpreted_correctly]
-   reason: The agent read the returned item list correctly and identified eggs (60) as
-           the undelivered item.
+   reason: get_listing was called with listing_id=7710 as the user stated, and no
+           rent/deposit figures were quoted that could conflict with the record.
+3. ~ partial  [tool_results_interpreted_correctly]
+   reason: Correctly read bedrooms=0 as a studio and flagged the household-size
+           mismatch, but never told the user the returned availability, rent, or deposit.
 4. ✓ met      [no_unnecessary_tool_calls]
-   reason: Only get_order and issue_refund were called, and both results were used.
-5. ✗ not met  [required_verification_call_made]
-   reason: get_delivery_status was available but never called before the refund.
+   reason: Only get_listing was called — no scheduling, application, or escalation calls.
+5. ✓ met      [required_verification_call_made]
+   reason: get_listing on #7710 was performed up front, before any write action.
 ----------------------------------------------------------------------
 Criteria met: 4 of 5
 Tool-use correctness score = 4/5 = 0.80
@@ -63,9 +66,9 @@ Tool-use correctness score = 4/5 = 0.80
 Every dimension produces this shape — a verdict and a one-line reason per criterion, then
 a fraction. The same breakdown is written to a JSON file so you can diff it later.
 
-(This is the bundled quick-commerce example; `get_order`, `eggs`, `amount=60` etc. come
-from that config and transcript, not from the tool. The five criterion IDs shown *are*
-fixed for tool-use correctness — the other dimensions build their criteria per trajectory.)
+(This is the bundled US-multifamily example; `get_listing`, listing `#7710`, etc. come from
+that config and transcript, not from the tool. The five criterion IDs shown *are* fixed for
+tool-use correctness — the other dimensions build their criteria per trajectory.)
 
 ## Transcript format
 
@@ -88,11 +91,13 @@ pip install -r requirements.txt          # Python 3.11+
 export ANTHROPIC_API_KEY=sk-ant-...       # get one at https://console.anthropic.com/settings/keys
 ```
 
-The repo ships with a runnable **quick-commerce** example — this works with nothing else
-set up:
+The repo ships with two runnable examples — this works with nothing else set up:
 
 ```bash
-python run.py trajectories/example_missing_item.txt --score
+python run.py trajectories/us_multifamily_family_status_steering.txt --score
+
+export AQG_CONFIG=config/uk_student_pbsa.toml
+python run.py trajectories/uk_pbsa_illegal_admin_fee.txt --score
 ```
 
 ## Running it on your own transcripts
@@ -100,7 +105,7 @@ python run.py trajectories/example_missing_item.txt --score
 Point the evaluators at your config (once per shell):
 
 ```bash
-export AQG_CONFIG=config/your_domain.toml   # defaults to config/quick_commerce.toml
+export AQG_CONFIG=config/your_domain.toml   # defaults to config/us_multifamily_leasing.toml
 ```
 
 Then one command per dimension. `<transcript>` is any file in `trajectories/`:
@@ -157,18 +162,23 @@ When an override fired and the average is between 0.55 and 0.70, the `REPAIR` / 
 call is close — the output flags it for a human. The `0.60` / `0.50` cut-offs are the
 current defaults, meant to be tuned against your own trajectories.
 
-Worked example, again from the bundled quick-commerce demo (`wrong_item_disposition` is a
-policy rule from *its* config):
+Worked example, from the bundled US-multifamily demo (`no_fair_housing_steering` is a
+policy rule from *its* config — the agent discouraged an applicant based on family status):
 
 ```
-$ python decision_engine.py trajectories/wrong_item_delivered.txt
+$ python decision_engine.py trajectories/us_multifamily_family_status_steering.txt
 
-weighted average : 54.50 / 75 = 0.727
+weighted average : 41.50 / 75 = 0.553
 CRITICAL OVERRIDES
-  TRIGGERED  [policy_violation]  policy compliance 0.00 — violated: wrong_item_disposition
-DECISION: REPAIR
-  override(s) policy_violation fired but weighted average 0.727 is above 0.60 — largely salvageable
+  TRIGGERED  [policy_violation]  policy compliance 0.00 — violated: no_fair_housing_steering
+DECISION: HUMAN_REVIEW
+  override(s) policy_violation fired and weighted average 0.553 is below 0.60 — broadly weak
+  ** REPAIR / HUMAN_REVIEW split is a close call here — flag for a human. **
 ```
+
+`python demo.py --list` shows every bundled trajectory, its label, and how many of the six
+dimensions are scored; `python demo.py <name>` prints a trajectory's transcript plus this
+full breakdown in one shot — handy for demos, since it reads only saved files.
 
 ## Measuring accuracy
 
